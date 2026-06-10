@@ -3,16 +3,16 @@
 // ══════════════════════════════════════════════════
 
 const ABILITIES = [
-  { key: "for", label: "Força",         abbr: "For" },
-  { key: "des", label: "Destreza",      abbr: "Des" },
-  { key: "con", label: "Constituição",  abbr: "Con" },
-  { key: "int", label: "Inteligência",  abbr: "Int" },
-  { key: "sab", label: "Sabedoria",     abbr: "Sab" },
-  { key: "car", label: "Carisma",       abbr: "Car" },
-  { key: "hon", label: "Honra",         abbr: "Hon" },
+  { key: "for", label: "Força", abbr: "For" },
+  { key: "des", label: "Destreza", abbr: "Des" },
+  { key: "con", label: "Constituição", abbr: "Con" },
+  { key: "int", label: "Inteligência", abbr: "Int" },
+  { key: "sab", label: "Sabedoria", abbr: "Sab" },
+  { key: "car", label: "Carisma", abbr: "Car" },
+  { key: "hon", label: "Honra", abbr: "Hon" },
 ];
 
-const POINT_COST = { 8:-2, 9:-1, 10:0, 11:1, 12:2, 13:3, 14:4, 15:6, 16:8, 17:11, 18:14 };
+const POINT_COST = { 8: -2, 9: -1, 10: 0, 11: 1, 12: 2, 13: 3, 14: 4, 15: 6, 16: 8, 17: 11, 18: 14 };
 const POINT_BUDGET = 24;
 
 function abilityMod(v) { return Math.floor((v - 10) / 2); }
@@ -136,6 +136,7 @@ let state = {
   level: 1,
   selectedSkills: [],
   selectedTalents: [],
+  abilityIncrements: {},  // { for: 2, des: 1, ... } — extra +1s bought with talent slots
 };
 
 function initState() {
@@ -144,6 +145,7 @@ function initState() {
   state.raceChoices = [];
   state.selectedSkills = [];
   state.selectedTalents = [];
+  state.abilityIncrements = {};
   ABILITIES.forEach(a => {
     state.assignments[a.key] = null;
     state.pointValues[a.key] = 10;
@@ -210,7 +212,8 @@ function baseValueFor(abilityKey) {
 function finalValueFor(abilityKey) {
   const base = baseValueFor(abilityKey);
   if (base === null) return null;
-  return base + raceBonusFor(abilityKey);
+  const increments = state.abilityIncrements[abilityKey] ?? 0;
+  return base + raceBonusFor(abilityKey) + increments;
 }
 
 // ══════════════════════════════════════════════════
@@ -269,7 +272,7 @@ function unassignRoll(abilityKey) {
 
 function changePointValue(abilityKey, delta) {
   const cur = state.pointValues[abilityKey];
-  const levels = Object.keys(POINT_COST).map(Number).sort((a,b)=>a-b);
+  const levels = Object.keys(POINT_COST).map(Number).sort((a, b) => a - b);
   const curIdx = levels.indexOf(cur);
   const newIdx = curIdx + delta;
   if (newIdx < 0 || newIdx >= levels.length) return;
@@ -295,7 +298,7 @@ function renderPoints() {
     row.querySelector(".pts-value").textContent = v;
     row.querySelector(".pts-cost").textContent = fmtMod(POINT_COST[v] ?? 0) + " pts";
     row.querySelector(".pts-btn-down").disabled = v <= 8;
-    row.querySelector(".pts-btn-up").disabled   = v >= 18 || pointsLeft() < 1;
+    row.querySelector(".pts-btn-up").disabled = v >= 18 || pointsLeft() < 1;
     renderAbilityFinal(a.key);
   });
 }
@@ -386,10 +389,10 @@ function renderRaceDetail() {
       <p class="choice-label">Escolha ${race.choiceBonus.count} habilidade(s) para +${race.choiceBonus.amount}:</p>
       <div class="choice-btns">
         ${ABILITIES.map(a => {
-          const cnt = chosen.filter(k => k === a.key).length;
-          const maxed = chosen.length >= race.choiceBonus.count;
-          return `<button class="choice-btn ${cnt > 0 ? 'chosen' : ''}" onclick="toggleRaceChoice('${a.key}')" ${(!cnt && maxed) ? 'disabled' : ''}>${a.abbr}</button>`;
-        }).join("")}
+      const cnt = chosen.filter(k => k === a.key).length;
+      const maxed = chosen.length >= race.choiceBonus.count;
+      return `<button class="choice-btn ${cnt > 0 ? 'chosen' : ''}" onclick="toggleRaceChoice('${a.key}')" ${(!cnt && maxed) ? 'disabled' : ''}>${a.abbr}</button>`;
+    }).join("")}
       </div>
     </div>`;
   }
@@ -460,7 +463,7 @@ function renderClassDetail() {
   const lvl = state.level;
 
   // Level selector row
-  const levelBtns = Array.from({length:20}, (_,i) => i+1).map(n =>
+  const levelBtns = Array.from({ length: 20 }, (_, i) => i + 1).map(n =>
     `<button class="level-btn ${n === lvl ? 'level-active' : ''}" onclick="selectLevel(${n})">${n}</button>`
   ).join("");
 
@@ -476,7 +479,7 @@ function renderClassDetail() {
   // Level table — highlight up to current level
   const tableRows = cls.tabela.map(row => {
     const isCurrent = row.nivel === lvl;
-    const isPast    = row.nivel <= lvl;
+    const isPast = row.nivel <= lvl;
     return `<tr class="${isCurrent ? 'row-current' : ''} ${isPast ? 'row-past' : 'row-future'}">
       <td class="ctbl-nivel">${row.nivel}º</td>
       <td class="ctbl-bba">+${row.bba}</td>
@@ -540,7 +543,7 @@ function renderClassDetail() {
 
         <div class="level-stats-bar">
           <div class="lstat lstat-lvl"><span>Nível ${lvl}</span></div>
-          <div class="lstat"><span class="lstat-label">BBA</span><span class="lstat-val">+${cls.tabela[lvl-1].bba}</span></div>
+          <div class="lstat"><span class="lstat-label">BBA</span><span class="lstat-val">+${cls.tabela[lvl - 1].bba}</span></div>
           <div class="lstat"><span class="lstat-label">PV máx.</span><span class="lstat-val">${pvDisplay}</span></div>
           <div class="lstat"><span class="lstat-label">PM máx.</span><span class="lstat-val">${pmTotal}</span></div>
         </div>
@@ -597,7 +600,7 @@ function skillSlotCount() {
 }
 
 // Map capitalized attr abbreviations → ability state keys
-const ATTR_TO_KEY = { For:"for", Des:"des", Con:"con", Int:"int", Sab:"sab", Car:"car", Hon:"hon" };
+const ATTR_TO_KEY = { For: "for", Des: "des", Con: "con", Int: "int", Sab: "sab", Car: "car", Hon: "hon" };
 
 function skillBonus(skillName, trained) {
   const skill = SKILLS_DATA[skillName];
@@ -678,20 +681,20 @@ function renderSkillsPanel() {
   }
 
   const slots = skillSlotCount();
-  const used  = state.selectedSkills.length;
+  const used = state.selectedSkills.length;
   const classSkills = CLASS_SKILLS[state.classKey] || [];
   const allSkillNames = Object.keys(SKILLS_DATA).sort();
 
   // Split into class skills and out-of-class
-  const inClass  = allSkillNames.filter(n =>  classSkills.includes(n));
+  const inClass = allSkillNames.filter(n => classSkills.includes(n));
   const outClass = allSkillNames.filter(n => !classSkills.includes(n));
 
   function skillRowHtml(name) {
-    const skill    = SKILLS_DATA[name];
+    const skill = SKILLS_DATA[name];
     const selected = isSkillSelected(name);
-    const entry    = state.selectedSkills.find(s => s.name === name);
+    const entry = state.selectedSkills.find(s => s.name === name);
     const warnings = getSkillWarnings(name);
-    const atFull   = used >= slots && !selected;
+    const atFull = used >= slots && !selected;
     const badgesHtml = warningBadgesHtml(warnings);
 
     // Show bonus: trained if selected AND trained-only or not trained-only
@@ -703,8 +706,8 @@ function renderSkillsPanel() {
     const specialtyHtml = selected && skill?.specialties
       ? `<select class="skill-specialty-select" onchange="setSkillSpecialty('${name}', this.value)">
           ${skill.specialties.map(sp =>
-            `<option value="${sp}" ${entry?.specialty === sp ? "selected" : ""}>${sp}</option>`
-          ).join("")}
+        `<option value="${sp}" ${entry?.specialty === sp ? "selected" : ""}>${sp}</option>`
+      ).join("")}
         </select>`
       : "";
 
@@ -748,23 +751,23 @@ function renderSkillsPanel() {
 function skillsSummaryHtml() {
   const allSkillNames = Object.keys(SKILLS_DATA).sort();
   return allSkillNames.map(name => {
-    const skill      = SKILLS_DATA[name];
-    const selected   = isSkillSelected(name);
-    const entry      = state.selectedSkills.find(s => s.name === name);
-    const warnings   = selected ? getSkillWarnings(name) : [];
-    const badges     = warningBadgesHtml(warnings);
-    const spec       = entry?.specialty ? ` <span class="sum-skill-spec">(${entry.specialty})</span>` : "";
-    const isTrained  = selected;
-    const total      = skillBonus(name, isTrained);
-    const attrKey    = ATTR_TO_KEY[skill?.attr];
-    const attrFinal  = attrKey ? finalValueFor(attrKey) : null;
-    const mod        = attrFinal !== null ? abilityMod(attrFinal) : 0;
-    const lvl        = state.level;
+    const skill = SKILLS_DATA[name];
+    const selected = isSkillSelected(name);
+    const entry = state.selectedSkills.find(s => s.name === name);
+    const warnings = selected ? getSkillWarnings(name) : [];
+    const badges = warningBadgesHtml(warnings);
+    const spec = entry?.specialty ? ` <span class="sum-skill-spec">(${entry.specialty})</span>` : "";
+    const isTrained = selected;
+    const total = skillBonus(name, isTrained);
+    const attrKey = ATTR_TO_KEY[skill?.attr];
+    const attrFinal = attrKey ? finalValueFor(attrKey) : null;
+    const mod = attrFinal !== null ? abilityMod(attrFinal) : 0;
+    const lvl = state.level;
 
     const breakdown = attrFinal !== null
       ? selected
         ? `<span class="sum-skill-breakdown">treino +3 · nível +${lvl} · ${skill.attr} ${fmtMod(mod)}</span>`
-        : `<span class="sum-skill-breakdown">½ nível +${Math.floor(lvl/2)} · ${skill.attr} ${fmtMod(mod)}</span>`
+        : `<span class="sum-skill-breakdown">½ nível +${Math.floor(lvl / 2)} · ${skill.attr} ${fmtMod(mod)}</span>`
       : "";
 
     return `<div class="sum-skill-row ${selected ? "sum-skill-trained" : "sum-skill-untrained"}">
@@ -796,20 +799,20 @@ function renderSummary() {
   section.style.display = "";
 
   const race = RACES[state.race];
-  const cls  = CLASSES[state.classKey];
+  const cls = CLASSES[state.classKey];
 
   const abRows = ABILITIES.map(a => {
-    const base  = baseValueFor(a.key) ?? "—";
+    const base = baseValueFor(a.key) ?? "—";
     const bonus = raceBonusFor(a.key);
     const final = finalValueFor(a.key);
-    const mod   = final !== null ? fmtMod(abilityMod(final)) : "—";
-    const bonusStr = bonus !== 0 ? `<span class="${bonus>0?'sum-bonus-pos':'sum-bonus-neg'}">${fmtMod(bonus)}</span>` : `<span class="sum-bonus-zero">—</span>`;
+    const mod = final !== null ? fmtMod(abilityMod(final)) : "—";
+    const bonusStr = bonus !== 0 ? `<span class="${bonus > 0 ? 'sum-bonus-pos' : 'sum-bonus-neg'}">${fmtMod(bonus)}</span>` : `<span class="sum-bonus-zero">—</span>`;
     return `<tr>
       <td class="sum-ability-name">${a.label}</td>
       <td class="sum-base">${base}</td>
       <td class="sum-bonus">${bonusStr}</td>
       <td class="sum-final ${final !== null ? 'sum-final-val' : ''}">${final ?? "—"}</td>
-      <td class="sum-mod ${final!==null ? (abilityMod(final)>=0?'sum-mod-pos':'sum-mod-neg') : ''}">${mod}</td>
+      <td class="sum-mod ${final !== null ? (abilityMod(final) >= 0 ? 'sum-mod-pos' : 'sum-mod-neg') : ''}">${mod}</td>
     </tr>`;
   }).join("");
 
@@ -838,18 +841,18 @@ function renderSummary() {
           </div>
           <div class="sum-meta-item">
             <span class="sum-meta-label">BBA</span>
-            <span class="sum-meta-value">+${cls.tabela[state.level-1].bba}</span>
+            <span class="sum-meta-value">+${cls.tabela[state.level - 1].bba}</span>
           </div>
           <div class="sum-meta-item">
             <span class="sum-meta-label">PV máx.</span>
-            <span class="sum-meta-value">${(()=>{
-              const conFinal = finalValueFor("con");
-              const conMod = conFinal !== null ? abilityMod(conFinal) : 0;
-              const lvl = state.level;
-              const pv = cls.pv_base + conMod + (lvl - 1) * (cls.pv_nivel + conMod);
-              const conStr = conMod >= 0 ? `+${conMod} Con/nív.` : `${conMod} Con/nív.`;
-              return conFinal !== null ? pv : `${cls.pv_base + (lvl-1)*cls.pv_nivel} + mod. Con`;
-            })()}</span>
+            <span class="sum-meta-value">${(() => {
+      const conFinal = finalValueFor("con");
+      const conMod = conFinal !== null ? abilityMod(conFinal) : 0;
+      const lvl = state.level;
+      const pv = cls.pv_base + conMod + (lvl - 1) * (cls.pv_nivel + conMod);
+      const conStr = conMod >= 0 ? `+${conMod} Con/nív.` : `${conMod} Con/nív.`;
+      return conFinal !== null ? pv : `${cls.pv_base + (lvl - 1) * cls.pv_nivel} + mod. Con`;
+    })()}</span>
           </div>
           <div class="sum-meta-item">
             <span class="sum-meta-label">Método</span>
@@ -894,7 +897,7 @@ function switchMode(mode) {
   initState();
   document.getElementById("modeRoll").classList.toggle("mode-active", mode === "roll");
   document.getElementById("modePoints").classList.toggle("mode-active", mode === "points");
-  document.getElementById("rollPanel").style.display  = mode === "roll" ? "" : "none";
+  document.getElementById("rollPanel").style.display = mode === "roll" ? "" : "none";
   document.getElementById("pointsPanel").style.display = mode === "points" ? "" : "none";
   if (mode === "roll") { state.rolls = []; renderRolls(); renderAssignments(); }
   if (mode === "points") { ABILITIES.forEach(a => { state.pointValues[a.key] = 10; }); renderPoints(); renderAssignments(); }

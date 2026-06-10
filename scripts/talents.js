@@ -6,12 +6,12 @@ let talentsData = null;
 let allTalentNames = new Set(); // flat set of every talent name across all categories
 
 const CATEGORY_META = {
-  combate:          { label: "Combate",           icon: "⚔️" },
-  pericia:          { label: "Perícia",            icon: "📚" },
-  destino:          { label: "Destino",            icon: "🌟" },
-  jutsu:            { label: "Jutsu",              icon: "🌀" },
-  tormenta:         { label: "Tormenta",           icon: "🌩️" },
-  poder_concedido:  { label: "Poder Concedido",    icon: "🌸" },
+  combate: { label: "Combate", icon: "⚔️" },
+  pericia: { label: "Perícia", icon: "📚" },
+  destino: { label: "Destino", icon: "🌟" },
+  jutsu: { label: "Jutsu", icon: "🌀" },
+  tormenta: { label: "Tormenta", icon: "🌩️" },
+  poder_concedido: { label: "Poder Concedido", icon: "🌸" },
 };
 
 // ── Prerequisite checker ──────────────────────────
@@ -67,9 +67,11 @@ function checkSinglePrereq(req) {
   if (r.includes(" ou ")) {
     return r.split(" ou ").some(part => checkSinglePrereq(part.trim()));
   }
-  const raceNames = { "hanyô": "hanyo", "henge": "henge", "mashin": "mashin",
+  const raceNames = {
+    "hanyô": "hanyo", "henge": "henge", "mashin": "mashin",
     "nezumi": "nezumi", "ryuujin": "ryuujin", "vanara": "vanara",
-    "kaijin": "kaijin", "humano": "humano" };
+    "kaijin": "kaijin", "humano": "humano"
+  };
   if (raceNames[r]) return state.race === raceNames[r];
 
   // ── Trained in skill: "treinado em Acrobacia" etc.
@@ -150,30 +152,101 @@ function checkSinglePrereq(req) {
 let talentFilter = "";
 let talentOpenCategories = new Set(["combate", "pericia", "destino", "jutsu", "tormenta", "poder_concedido"]);
 
+// Slot accounting:
+// Level 1: talentos_iniciais (class fixed) + 1 free choice
+// Level 2+: 1 slot per level above 1, each usable as talent OR ability +1
+function freeSlotCount() {
+  // Level 1 = 1 free slot; level 2 = 2 free (1+1); level N = N free
+  return state.level;
+}
+function usedFreeSlots() {
+  return state.selectedTalents.length + totalAbilityIncrements();
+}
+function totalAbilityIncrements() {
+  return Object.values(state.abilityIncrements ?? {}).reduce((s, v) => s + (v || 0), 0);
+}
+function slotsLeft() { return freeSlotCount() - usedFreeSlots(); }
+
+// Ability increment helpers
+function incrementAbility(key) {
+  if (slotsLeft() <= 0) return;
+  state.abilityIncrements[key] = (state.abilityIncrements[key] ?? 0) + 1;
+  renderAbilityFinal(key);
+  renderTalentsPanel();
+  checkSummaryReady();
+}
+function decrementAbility(key) {
+  if (!state.abilityIncrements[key]) return;
+  state.abilityIncrements[key]--;
+  if (!state.abilityIncrements[key]) delete state.abilityIncrements[key];
+  renderAbilityFinal(key);
+  renderTalentsPanel();
+  checkSummaryReady();
+}
+
+function abilityIncrementsHtml() {
+  const left = slotsLeft();
+  return `<div class="ability-inc-section">
+    <div class="ability-inc-title">⬆ Aumentar Habilidade <span class="ability-inc-note">(1 slot = +1 em qualquer habilidade)</span></div>
+    <div class="ability-inc-grid">
+      ${ABILITIES.map(a => {
+    const cur = state.abilityIncrements[a.key] ?? 0;
+    const final = finalValueFor(a.key);
+    const mod = final !== null ? abilityMod(final) : null;
+    const modStr = mod !== null ? ` (mod ${fmtMod(mod)})` : "";
+    return `<div class="ability-inc-row">
+          <span class="ability-inc-label">${a.abbr}</span>
+          <span class="ability-inc-final">${final !== null ? final : "—"}${modStr}</span>
+          <div class="ability-inc-controls">
+            <button class="ability-inc-btn" onclick="decrementAbility('${a.key}')" ${!cur ? "disabled" : ""}>−</button>
+            <span class="ability-inc-count">${cur > 0 ? `+${cur}` : "0"}</span>
+            <button class="ability-inc-btn" onclick="incrementAbility('${a.key}')" ${left <= 0 ? "disabled" : ""}>+</button>
+          </div>
+        </div>`;
+  }).join("")}
+    </div>
+  </div>`;
+}
+
 function renderTalentsPanel() {
   const panel = document.getElementById("talentsPanel");
   if (!panel || !talentsData) return;
 
   const search = talentFilter.toLowerCase();
+  const free = freeSlotCount();
+  const used = usedFreeSlots();
+  const left = free - used;
+  const atFull = left <= 0;
+
+  // Class initial talents display
+  const initTalents = state.classKey ? (CLASSES[state.classKey]?.talentos_iniciais ?? "") : "";
 
   let html = `
     <div class="talents-header">
-      <div class="talents-count-bar">
-        <span class="talents-selected-count">${state.selectedTalents.length} talento(s) selecionado(s)</span>
+      <div class="talents-budget ${atFull ? "slots-full" : used > 0 ? "slots-partial" : ""}">
+        <span class="talents-budget-label">Slots livres usados:</span>
+        <span class="talents-budget-num">${used}&thinsp;/&thinsp;${free}</span>
+        <span class="talents-budget-note">${atFull ? "Limite atingido" : `${left} disponível${left !== 1 ? "is" : ""} — 1 por nível`}</span>
       </div>
       <div class="talents-search-wrap">
         <input id="talentSearchInput" class="talent-search" type="text"
           placeholder="Buscar talento..." value="${talentFilter}"
           oninput="talentFilter=this.value; renderTalentsPanel()"/>
       </div>
-    </div>`;
+    </div>
+
+    ${initTalents ? `<div class="initial-talents-bar">
+      <span class="init-talents-label">🎓 Talentos iniciais da classe:</span>
+      <span class="init-talents-list">${initTalents}</span>
+    </div>` : ""}
+
+    ${abilityIncrementsHtml()}`;
 
   // Iterate categories
   for (const [catKey, catMeta] of Object.entries(CATEGORY_META)) {
     const raw = talentsData[catKey];
     if (!raw) continue;
 
-    // Flatten poder_concedido nested structure
     let talents = {};
     if (catKey === "poder_concedido") {
       for (const [deity, subs] of Object.entries(raw)) {
@@ -185,7 +258,6 @@ function renderTalentsPanel() {
       talents = raw;
     }
 
-    // Filter by search
     const entries = Object.entries(talents).filter(([name, data]) => {
       if (!search) return true;
       return name.toLowerCase().includes(search) ||
@@ -194,16 +266,19 @@ function renderTalentsPanel() {
 
     if (entries.length === 0) continue;
 
-    // Sort: met prereqs first, then alphabetical within each group
     entries.sort(([na, da], [nb, db]) => {
+      const selA = state.selectedTalents.some(t => t.name === na);
+      const selB = state.selectedTalents.some(t => t.name === nb);
       const metA = checkPrerequisitos(da.prerequisitos ?? []).met;
       const metB = checkPrerequisitos(db.prerequisitos ?? []).met;
+      if (selA !== selB) return selA ? -1 : 1;
       if (metA !== metB) return metA ? -1 : 1;
       return na.localeCompare(nb, "pt");
     });
 
     const isOpen = talentOpenCategories.has(catKey);
-    const metCount = entries.filter(([,d]) => checkPrerequisitos(d.prerequisitos ?? []).met).length;
+    const metCount = entries.filter(([, d]) => checkPrerequisitos(d.prerequisitos ?? []).met).length;
+    const selCount = entries.filter(([n]) => state.selectedTalents.some(t => t.name === n)).length;
 
     html += `
       <div class="talent-category">
@@ -212,46 +287,56 @@ function renderTalentsPanel() {
           <span class="talent-cat-icon">${catMeta.icon}</span>
           <span class="talent-cat-label">${catMeta.label}</span>
           <span class="talent-cat-counts">
-            <span class="tcc-available">${metCount} disponíveis</span>
+            ${selCount ? `<span class="tcc-selected">${selCount} sel.</span>` : ""}
+            <span class="tcc-available">${metCount} disp.</span>
             <span class="tcc-total">/ ${entries.length}</span>
           </span>
           <span class="talent-cat-chevron">${isOpen ? "▾" : "▸"}</span>
         </button>
         ${isOpen ? `<div class="talent-list">${entries.map(([name, data]) =>
-          talentCardHtml(name, data, catKey)).join("")}</div>` : ""}
+      talentCardHtml(name, data, catKey, atFull)).join("")}</div>` : ""}
       </div>`;
   }
 
   panel.innerHTML = html;
 }
 
-function talentCardHtml(name, data, catKey) {
+function talentCardHtml(name, data, catKey, atFull = false) {
   const prereqs = data.prerequisitos ?? [];
-  const { met, unmet } = checkPrerequisitos(prereqs);
+  const { met } = checkPrerequisitos(prereqs);
   const selected = state.selectedTalents.some(t => t.name === name);
   const deity = data._deity;
 
   const prereqBadges = prereqs.length
     ? prereqs.map(p => {
-        const ok = checkSinglePrereq(p);
-        return `<span class="prereq-badge ${ok ? "prereq-ok" : "prereq-fail"}" title="${p}">${p}</span>`;
-      }).join("")
+      const ok = checkSinglePrereq(p);
+      return `<span class="prereq-badge ${ok ? "prereq-ok" : "prereq-fail"}" title="${p}">${p}</span>`;
+    }).join("")
     : `<span class="prereq-none">Sem pré-requisitos</span>`;
 
-  const deityBadge = deity
-    ? `<span class="talent-deity-badge">${deity}</span>` : "";
+  const deityBadge = deity ? `<span class="talent-deity-badge">${deity}</span>` : "";
+
+  let btnClass, btnLabel, btnDisabled;
+  if (selected) {
+    btnClass = "btn-remove"; btnLabel = "Remover"; btnDisabled = "";
+  } else if (!met) {
+    btnClass = "btn-locked"; btnLabel = "🔒 Bloqueado"; btnDisabled = "disabled";
+  } else if (atFull) {
+    btnClass = "btn-locked"; btnLabel = "Sem slots"; btnDisabled = "disabled";
+  } else {
+    btnClass = "btn-add"; btnLabel = "+ Adicionar"; btnDisabled = "";
+  }
 
   return `<div class="talent-card ${selected ? "talent-selected" : ""} ${!met && !selected ? "talent-locked" : ""}">
     <div class="talent-card-top">
       <div class="talent-card-title-row">
         <span class="talent-name">${name}</span>
         ${deityBadge}
-        ${selected ? '<span class="talent-selected-badge">✓ Selecionado</span>' : ""}
+        ${selected ? '<span class="talent-selected-badge">✓</span>' : ""}
       </div>
-      <button class="talent-toggle-btn ${selected ? "btn-remove" : (met ? "btn-add" : "btn-locked")}"
-        ${!met && !selected ? "disabled" : ""}
-        onclick="toggleTalent('${name.replace(/'/g,"\\'")}', '${catKey}')">
-        ${selected ? "Remover" : met ? "+ Adicionar" : "🔒 Bloqueado"}
+      <button class="talent-toggle-btn ${btnClass}" ${btnDisabled}
+        onclick="toggleTalent('${name.replace(/'/g, "\\'")}', '${catKey}')">
+        ${btnLabel}
       </button>
     </div>
     <div class="talent-prereqs">${prereqBadges}</div>
@@ -270,6 +355,7 @@ function toggleTalent(name, catKey) {
   if (idx >= 0) {
     state.selectedTalents.splice(idx, 1);
   } else {
+    if (slotsLeft() <= 0) return;
     state.selectedTalents.push({ name, category: catKey });
   }
   renderTalentsPanel();
