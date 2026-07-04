@@ -140,4 +140,25 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   w.smAdjustFavor(-5); eq("favor min 0", w.SM.play.favor, 0);
 })();
 
+// ── v2: revisão — resumo completo (smSummaryHtml) ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/data-sorcery.js","scripts/setimo-mar/data-dueling.js","scripts/setimo-mar/data-stories.js","scripts/setimo-mar/data-societies.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js"]);
+  w.smSetConcept("name","Teste");
+  w.smSelectNation("avalon"); w.smSetNationTrait("finesse");
+  w.smToggleAdvantage("feiticaria");
+  w.smSetSchool("glamour");
+  w.smToggleSorceryPower(w.SM_SORCERY.glamour.menores[0].key);
+  w.smToggleAdvantage("academiaduelista");
+  w.smSetStyle("valroux");
+  w.smApplyStoryPreset("vendeta");
+  w.smSetSociety("exploradores");
+  w.smAddReputacao("Honrado");
+  const html = w.smSummaryHtml();
+  ok("resumo inclui Glamour", html.includes("Glamour"));
+  ok("resumo inclui Valroux", html.includes("Valroux"));
+  ok("resumo inclui Vendeta", html.includes("Vendeta"));
+  ok("resumo inclui Sociedade dos Exploradores", html.includes("Sociedade dos Exploradores"));
+  ok("resumo inclui Honrado", html.includes("Honrado"));
+})();
+
 report();

@@ -268,9 +268,7 @@ function renderSummaryButton() {
 }
 
 // ── Resumo ──────────────────────────────────────────────────────────
-function renderSummary() {
-  const el = document.getElementById("sm-summary");
-  if (!el) return;
+function smSummaryHtml() {
   const nation = SM.nation ? SM_NATIONS[SM.nation] : null;
   const traitsHtml = SM_TRAITS.map(t =>
     `<div class="sm-sum-stat"><span>${t.label}</span><b>${smTraitFinal(t.key)}</b></div>`).join("");
@@ -287,7 +285,67 @@ function renderSummary() {
   const hub = SM.arcana.hubris ? SM_ARCANA[SM.arcana.hubris] : null;
   const quirks = SM.backgrounds.map(b => `<li>“${SM_BACKGROUNDS[b].quirk}”</li>`).join("") || "<li>—</li>";
 
-  el.innerHTML = `
+  // ── blocos v2 (só renderizam quando há dado) ──
+  let sorceryBlock = "";
+  if (SM.sorcery && SM.sorcery.school && typeof SM_SORCERY !== "undefined" && SM_SORCERY[SM.sorcery.school]) {
+    const s = SM_SORCERY[SM.sorcery.school];
+    const all = [...s.maiores, ...s.menores];
+    const powersHtml = (SM.sorcery.powers || []).map(k => {
+      const p = all.find(x => x.key === k);
+      return `<li>${p ? p.nome : k}</li>`;
+    }).join("") || "<li>—</li>";
+    sorceryBlock = `
+      <div class="sm-sheet-block">
+        <h4>Feitiçaria — ${s.label}</h4>
+        <ul class="sm-sheet-list">${powersHtml}</ul>
+      </div>`;
+  }
+
+  let duelingBlock = "";
+  if (SM.dueling && SM.dueling.style && typeof SM_DUELING_STYLES !== "undefined" && SM_DUELING_STYLES[SM.dueling.style]) {
+    const d = SM_DUELING_STYLES[SM.dueling.style];
+    duelingBlock = `
+      <div class="sm-sheet-block">
+        <h4>Estilo de Duelo — ${d.label}</h4>
+        <p>${d.bonus}</p>
+      </div>`;
+  }
+
+  let storyBlock = "";
+  const story = SM.stories && SM.stories[0];
+  if (story && (story.nome || story.final)) {
+    const nextStep = (story.passos || []).find(p => !p.feito);
+    storyBlock = `
+      <div class="sm-sheet-block">
+        <h4>História — ${story.nome || "—"}</h4>
+        <p><strong>Final:</strong> ${story.final || "—"}</p>
+        <p><strong>Próximo passo:</strong> ${nextStep ? nextStep.texto : "—"}</p>
+      </div>`;
+  }
+
+  let societyBlock = "";
+  if (SM.society && SM.society.key && typeof SM_SOCIETIES !== "undefined" && SM_SOCIETIES[SM.society.key]) {
+    const soc = SM_SOCIETIES[SM.society.key];
+    societyBlock = `
+      <div class="sm-sheet-block">
+        <h4>Sociedade — ${soc.label}</h4>
+        <p>Favor inicial: 2</p>
+      </div>`;
+  }
+
+  let touchesBlock = "";
+  const ft = SM.finalTouches;
+  if (ft && ((ft.reputacoes && ft.reputacoes.length) || (ft.idiomas && ft.idiomas.length) || ft.fortunaInicial)) {
+    touchesBlock = `
+      <div class="sm-sheet-block">
+        <h4>Toques Finais</h4>
+        <p><strong>Reputação:</strong> ${ft.reputacoes && ft.reputacoes.length ? ft.reputacoes.join(", ") : "—"}</p>
+        <p><strong>Idiomas:</strong> ${ft.idiomas && ft.idiomas.length ? ft.idiomas.join(", ") : "—"} <span class="sm-count">(${(ft.idiomas||[]).length} / Grau de Argúcia)</span></p>
+        <p><strong>Fortuna inicial:</strong> ${ft.fortunaInicial || 0}</p>
+      </div>`;
+  }
+
+  return `
     <div class="sm-sheet" id="sm-print-area">
       <div class="sm-sheet-head">
         <h3>${SM.concept.name || "Herói sem nome"}</h3>
@@ -325,10 +383,16 @@ function renderSummary() {
         <ul class="sm-sheet-list">${quirks}</ul>
       </div>
 
+      ${sorceryBlock}
+      ${duelingBlock}
+      ${storyBlock}
+      ${societyBlock}
+      ${touchesBlock}
+
       <div class="sm-sheet-block sm-sheet-tracks">
         <div><h4>Pontos Heroicos</h4><p>Começa cada sessão com 1.</p></div>
         <div><h4>Espiral da Morte</h4><p>4 Ferimentos Dramáticos = Desamparado.</p></div>
-        ${nation && nation.feiticaria ? `<div><h4>Feitiçaria disponível</h4><p>${nation.feiticaria} (requer a Vantagem Feitiçaria — módulo na v2).</p></div>` : ""}
+        ${nation && nation.feiticaria ? `<div><h4>Feitiçaria disponível</h4><p>${nation.feiticaria} (requer a Vantagem Feitiçaria).</p></div>` : ""}
       </div>
     </div>
 
@@ -336,6 +400,11 @@ function renderSummary() {
       <button class="sm-btn" onclick="smPrint()">🖨️ Imprimir / PDF</button>
       <button class="sm-btn" onclick="smExport()">⬇️ Exportar JSON</button>
     </div>`;
+}
+function renderSummary() {
+  const el = document.getElementById("sm-summary");
+  if (!el) return;
+  el.innerHTML = smSummaryHtml();
   el.style.display = "block";
 }
 
@@ -544,7 +613,7 @@ function renderAll() {
 // expõe para os onclick inline (smInit agora vive em app.js)
 Object.assign(window, {
   smSetConcept, smSelectNation, smSetNationTrait, smAdjustTrait, smToggleBackground,
-  smAdjustSkill, smToggleAdvantage, smSetArcana, smReset, renderSummary,
+  smAdjustSkill, smToggleAdvantage, smSetArcana, smReset, renderSummary, smSummaryHtml,
   smExport, smImportFile, smPrint, renderAll,
   smSetSchool, smSorceryBudget, smPowerRank, smToggleSorceryPower, renderSorcery,
   smSetStyle, renderDueling,
