@@ -10,6 +10,9 @@ import { AdvantagesStep } from "./steps/AdvantagesStep";
 import { ArcanaStep } from "./steps/ArcanaStep";
 import { SorceryStep } from "./steps/SorceryStep";
 import { DuelingStep } from "./steps/DuelingStep";
+import { StoriesStep } from "./steps/StoriesStep";
+import { SocietyStep } from "./steps/SocietyStep";
+import { FinalTouchesStep } from "./steps/FinalTouchesStep";
 
 // Mapa tabId → componente de Step. Preenchido incrementalmente nas Tasks 8-14;
 // abas ainda não implementadas caem no fallback "Em construção".
@@ -22,6 +25,9 @@ const STEP_COMPONENTS: Partial<Record<string, ComponentType>> = {
   arcanos: ArcanaStep,
   feiticaria: SorceryStep,
   duelo: DuelingStep,
+  historias: StoriesStep,
+  sociedade: SocietyStep,
+  toques: FinalTouchesStep,
 };
 
 function Placeholder() {
