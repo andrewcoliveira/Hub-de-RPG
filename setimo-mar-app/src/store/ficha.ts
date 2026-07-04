@@ -375,19 +375,21 @@ export const useFicha = create<FichaState>()(
     {
       name: STORAGE_KEY,
       version: 2,
-      partialize: (state) => ({ f: state.f }),
+      partialize: (state) => ({ f: state.f, theme: state.theme }),
       migrate: (persisted) => ({ f: mergeDefaults((persisted as { f?: unknown } | undefined)?.f ?? persisted) }),
       merge: (persisted, current) => {
-        const persistedF = (persisted as { f?: unknown } | undefined)?.f;
+        const persistedState = persisted as { f?: unknown; theme?: Theme } | undefined;
+        const persistedF = persistedState?.f;
+        const theme = persistedState?.theme ?? current.theme;
         if (persistedF) {
-          return { ...current, f: mergeDefaults(persistedF) };
+          return { ...current, f: mergeDefaults(persistedF), theme };
         }
         // Sem v2 persistido: tenta migrar do v1 (localStorage) antes de cair no default.
         if (typeof window !== "undefined" && typeof window.localStorage !== "undefined") {
           const migrated = loadFrom((k) => window.localStorage.getItem(k));
-          if (migrated) return { ...current, f: migrated };
+          if (migrated) return { ...current, f: migrated, theme };
         }
-        return current;
+        return { ...current, theme };
       },
     }
   )

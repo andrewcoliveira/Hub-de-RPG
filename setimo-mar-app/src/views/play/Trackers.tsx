@@ -48,6 +48,9 @@ export function Trackers() {
           onDec={() => adjustWound("ferimentos", -1)}
           onInc={() => adjustWound("ferimentos", 1)}
         />
+        <span data-testid="track-ferimentos-val" className="sr-only">
+          {f.play.ferimentos}
+        </span>
       </Card>
 
       <Card className="flex flex-col items-center gap-2" title="Espiral da Morte">
@@ -70,6 +73,9 @@ export function Trackers() {
       <Card className="flex flex-col items-center gap-2" title="Favor">
         <h3 className="font-semibold text-ink">Favor</h3>
         <Stepper value={f.play.favor} onDec={() => adjustFavor(-1)} onInc={() => adjustFavor(1)} />
+        <span data-testid="track-favor-val" className="sr-only">
+          {f.play.favor}
+        </span>
       </Card>
 
       <Card className="flex flex-col items-center gap-2" title="Fortuna">
@@ -80,6 +86,9 @@ export function Trackers() {
           value={f.play.fortuna}
           onChange={(e) => setFortuna(+e.target.value || 0)}
         />
+        <span data-testid="track-fortuna-val" className="sr-only">
+          {f.play.fortuna}
+        </span>
       </Card>
     </div>
   );

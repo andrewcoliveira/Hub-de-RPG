@@ -25,4 +25,11 @@ describe("store", () => {
   it("espiral clampa 0..4 e desamparado", () => { for (let i=0;i<6;i++) s().adjustWound("ferimentosDramaticos", 1); expect(s().f.play.ferimentosDramaticos).toBe(4); });
   it("pontos heroicos ≥ 0", () => { s().adjustHeroPoints(-5); expect(s().f.play.pontosHeroicos).toBe(0); });
   it("importFicha usa mergeDefaults", () => { s().importFicha({ concept:{name:"Imp"}, play:{} }); expect(s().f.concept.name).toBe("Imp"); expect(s().f.play.pontosHeroicos).toBe(1); });
+  it("setTheme persiste o tema no localStorage", () => {
+    s().setTheme("dark");
+    const raw = window.localStorage.getItem("setimoMar.ficha.v2");
+    expect(raw).not.toBeNull();
+    const parsed = JSON.parse(raw as string);
+    expect(parsed.state.theme).toBe("dark");
+  });
 });
