@@ -533,6 +533,7 @@ function renderStories() {
 
 // ── Sociedades Secretas (aba 10) ─────────────────────────────────────
 function smSetSociety(key) {
+  if (SM_SOCIETIES[key] && SM_SOCIETIES[key].heroisNao) return;
   SM.society.key = (SM.society.key === key ? null : key);
   renderSocieties();
   if (typeof renderTabBar === "function") renderTabBar();
@@ -550,9 +551,9 @@ function renderSocieties() {
 }
 
 // ── Toques Finais (aba 11) ───────────────────────────────────────────
-function smAddReputacao(t) { if (!t) return; SM.finalTouches.reputacoes.push(t); renderToques(); smSave(); }
+function smAddReputacao(t) { t = (t || "").trim(); if (!t) return; SM.finalTouches.reputacoes.push(t); renderToques(); smSave(); }
 function smRemoveReputacao(i) { SM.finalTouches.reputacoes.splice(i, 1); renderToques(); smSave(); }
-function smAddIdioma(t) { if (!t) return; SM.finalTouches.idiomas.push(t); renderToques(); smSave(); }
+function smAddIdioma(t) { t = (t || "").trim(); if (!t) return; SM.finalTouches.idiomas.push(t); renderToques(); smSave(); }
 function smRemoveIdioma(i) { SM.finalTouches.idiomas.splice(i, 1); renderToques(); smSave(); }
 function smSetFortunaInicial(n) { SM.finalTouches.fortunaInicial = +n || 0; smSave(); }
 function renderToques() {
@@ -584,8 +585,7 @@ function smImportFile(input) {
   reader.onload = e => {
     try {
       const data = JSON.parse(e.target.result);
-      SM = Object.assign(smDefaultState(), data);
-      SM_SKILLS.forEach(s => { if (SM.skills[s.key] == null) SM.skills[s.key] = 0; });
+      SM = smMergeDefaults(data);
       smSave(); renderAll();
       alert("Ficha importada com sucesso.");
     } catch (err) { alert("Arquivo inválido: " + err.message); }

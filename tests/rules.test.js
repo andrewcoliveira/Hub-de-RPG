@@ -161,4 +161,22 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   ok("resumo inclui Honrado", html.includes("Honrado"));
 })();
 
+// ── v2: correções finais (import robusto, guard sociedade, trim, laerdom) ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/data-sorcery.js","scripts/setimo-mar/data-societies.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js"]);
+  // (1) merge profundo robusto a v2 parcial (o que smImportFile agora usa)
+  const merged = w.smMergeDefaults({ stories: [], play: {}, sorcery: {}, finalTouches: {} });
+  ok("merge preenche stories[0]", Array.isArray(merged.stories) && merged.stories.length >= 1);
+  ok("merge preenche play.pontosHeroicos", merged.play.pontosHeroicos === 1);
+  ok("merge preenche sorcery.powers", Array.isArray(merged.sorcery.powers));
+  // (2) guard heroisNao
+  w.smSetSociety("novusOrdo"); ok("novusOrdo nao selecionavel", w.SM.society.key === null);
+  w.smSetSociety("exploradores"); ok("sociedade valida selecionavel", w.SM.society.key === "exploradores");
+  // (3) trim
+  w.smAddReputacao("   "); ok("reputacao so-espaco ignorada", w.SM.finalTouches.reputacoes.length === 0);
+  w.smAddReputacao("  Honrado  "); ok("reputacao aparada", w.SM.finalTouches.reputacoes[0] === "Honrado");
+  // (4) laerdom existe
+  ok("escola laerdom existe", !!w.SM_SORCERY.laerdom && Array.isArray(w.SM_SORCERY.laerdom.menores));
+})();
+
 report();

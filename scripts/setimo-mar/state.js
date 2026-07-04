@@ -37,14 +37,20 @@ function smSave() {
 }
 function smMergeDefaults(data) {
   const base = smDefaultState();
+  // guarda os defaults dos sub-objetos ANTES do Object.assign de nivel
+  // superior, que substitui as referencias de base.* pelas de data.* quando
+  // presentes (mesmo vazias) — mesclar depois usando `base.x` reeixaminado
+  // mesclaria o objeto com ele mesmo e perderia os defaults.
+  const defPlay = base.play, defSorcery = base.sorcery, defDueling = base.dueling,
+        defSociety = base.society, defFinalTouches = base.finalTouches, defStories = base.stories;
   const out = Object.assign(base, data);
   // garante sub-objetos e perícias
-  out.play = Object.assign(base.play, data.play || {});
-  out.sorcery = Object.assign(base.sorcery, data.sorcery || {});
-  out.dueling = Object.assign(base.dueling, data.dueling || {});
-  out.society = Object.assign(base.society, data.society || {});
-  out.finalTouches = Object.assign(base.finalTouches, data.finalTouches || {});
-  if (!Array.isArray(out.stories) || !out.stories.length) out.stories = base.stories;
+  out.play = Object.assign({}, defPlay, data.play || {});
+  out.sorcery = Object.assign({}, defSorcery, data.sorcery || {});
+  out.dueling = Object.assign({}, defDueling, data.dueling || {});
+  out.society = Object.assign({}, defSociety, data.society || {});
+  out.finalTouches = Object.assign({}, defFinalTouches, data.finalTouches || {});
+  if (!Array.isArray(out.stories) || !out.stories.length) out.stories = defStories;
   SM_SKILLS.forEach(s => { if (out.skills[s.key] == null) out.skills[s.key] = 0; });
   out.schemaVersion = 2;
   return out;

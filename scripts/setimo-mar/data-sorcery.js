@@ -84,6 +84,19 @@ const SM_SORCERY = {
       { key: "so_maldicao", nome: "Maldição", desc: "Tira dados de um alvo." },
     ],
   },
+  laerdom: {
+    label: "Laerdom", fonte: "Magia rúnica dos deuses do norte (Vesten)",
+    custo: "Cobra do wyrd (destino) do usuário", nota: "curado",
+    maiores: [
+      { key: "la_destino", nome: "Runa do Destino", desc: "Reescreve um resultado ruim já ocorrido." },
+      { key: "la_furor", nome: "Furor do Berserker", desc: "Concede força e resistência sobre-humanas." },
+    ],
+    menores: [
+      { key: "la_viagem", nome: "Runa de Viagem", desc: "Acelera uma jornada por terra ou mar." },
+      { key: "la_tempestade", nome: "Runa de Tempestade", desc: "Convoca ventos e mar bravio." },
+      { key: "la_sorte", nome: "Runa da Sorte", desc: "Favorece o wyrd do alvo por um instante." },
+    ],
+  },
 };
 
 Object.assign(window, { SM_SORCERY });
