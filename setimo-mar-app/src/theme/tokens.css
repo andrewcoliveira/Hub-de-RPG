@@ -1,1 +1,31 @@
-:root{--surface:#f4ecd8;--surface-2:#efe3c6;--ink:#2c2117;--ink-soft:#5b4a38;--line:#d8c79e;--accent:#b6862f;--accent-ink:#20160a;}
+:root {
+  --surface: #f4ecd8;
+  --surface-2: #efe3c6;
+  --ink: #2c2117;
+  --ink-soft: #5b4a38;
+  --line: #d8c79e;
+  --accent: #b6862f;
+  --accent-ink: #20160a;
+}
+
+[data-theme="dark"] {
+  --surface: #0d2436;
+  --surface-2: #123049;
+  --ink: #eadfc6;
+  --ink-soft: #b8a882;
+  --line: #284a63;
+  --accent: #d8b45a;
+  --accent-ink: #20160a;
+}
+
+/* acentos por nacao */
+[data-nation="avalon"] { --accent: #2c7a7b; --accent-ink: #eafcfb; }
+[data-nation="castilha"] { --accent: #a3341f; --accent-ink: #ffe9e2; }
+[data-nation="sarmacia"] { --accent: #b0872f; --accent-ink: #241a06; }
+[data-nation="eisen"] { --accent: #6b6f76; --accent-ink: #f2f3f5; }
+[data-nation="inismore"] { --accent: #2f7d4f; --accent-ink: #e8fbef; }
+[data-nation="montaigne"] { --accent: #3f5fb0; --accent-ink: #eaefff; }
+[data-nation="terrasaltas"] { --accent: #5a6e3a; --accent-ink: #f0f5e4; }
+[data-nation="ussura"] { --accent: #4a7fa5; --accent-ink: #eaf4fb; }
+[data-nation="vesten"] { --accent: #7a5aa0; --accent-ink: #f3ecff; }
+[data-nation="vodacce"] { --accent: #8c2f57; --accent-ink: #ffe9f1; }
