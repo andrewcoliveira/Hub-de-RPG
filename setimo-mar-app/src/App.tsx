@@ -1,3 +1,17 @@
+import { ThemeProvider } from "@/theme/ThemeProvider";
+import { useFicha } from "@/store/ficha";
+import { TopBar } from "@/views/TopBar";
+import { CreationView } from "@/views/creation/CreationView";
+
 export default function App() {
-  return <div className="min-h-screen bg-surface text-ink p-6">7º Mar — em construção</div>;
+  const mode = useFicha((s) => s.mode);
+
+  return (
+    <ThemeProvider>
+      <div className="min-h-screen bg-surface text-ink">
+        <TopBar />
+        {mode === "criar" ? <CreationView /> : <div className="p-6">Jogo (em construção)</div>}
+      </div>
+    </ThemeProvider>
+  );
 }

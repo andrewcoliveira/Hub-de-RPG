@@ -18,6 +18,7 @@ import {
 } from "@/engine/derive";
 import { CREATION } from "@/engine/creation";
 import { NATIONS, ADVANTAGES, SOCIETIES } from "@/engine/data";
+import { visibleTabs } from "@/lib/tabs";
 
 const STORAGE_KEY = "setimoMar.ficha.v2";
 
@@ -98,9 +99,9 @@ export interface FichaState {
 
   // Modo & navegação
   setMode: (mode: Mode) => void;
-  goTabById: (id: string) => void;
-  nextTab: (visibleTabIds: string[]) => void;
-  prevTab: (visibleTabIds: string[]) => void;
+  goTab: (id: string) => void;
+  nextTab: () => void;
+  prevTab: () => void;
 
   // Tema
   setTheme: (theme: Theme) => void;
@@ -349,22 +350,24 @@ export const useFicha = create<FichaState>()(
 
       setMode: (mode) => set({ mode }),
 
-      goTabById: (id) => set({ activeTab: id }),
+      goTab: (id) => set({ activeTab: id }),
 
-      nextTab: (visibleTabIds) =>
+      nextTab: () =>
         set((state) => {
-          const i = visibleTabIds.indexOf(state.activeTab);
+          const ids = visibleTabs(state.f).map((t) => t.id);
+          const i = ids.indexOf(state.activeTab);
           const cur = i >= 0 ? i : 0;
-          const next = Math.max(0, Math.min(cur + 1, visibleTabIds.length - 1));
-          return { activeTab: visibleTabIds[next] ?? state.activeTab };
+          const next = Math.max(0, Math.min(cur + 1, ids.length - 1));
+          return { activeTab: ids[next] ?? state.activeTab };
         }),
 
-      prevTab: (visibleTabIds) =>
+      prevTab: () =>
         set((state) => {
-          const i = visibleTabIds.indexOf(state.activeTab);
+          const ids = visibleTabs(state.f).map((t) => t.id);
+          const i = ids.indexOf(state.activeTab);
           const cur = i >= 0 ? i : 0;
-          const prev = Math.max(0, Math.min(cur - 1, visibleTabIds.length - 1));
-          return { activeTab: visibleTabIds[prev] ?? state.activeTab };
+          const prev = Math.max(0, Math.min(cur - 1, ids.length - 1));
+          return { activeTab: ids[prev] ?? state.activeTab };
         }),
 
       setTheme: (theme) => set({ theme }),
