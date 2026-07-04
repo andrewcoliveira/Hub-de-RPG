@@ -1,4 +1,5 @@
 export * from "./types";
 export * from "./creation";
 export * from "./data";
-// Nota: ./derive e ./migrate são adicionados nas Tasks 3 e 4 (ainda não existem).
+export * from "./migrate";
+// Nota: ./derive é adicionado na Task 3 (ainda não existe).
