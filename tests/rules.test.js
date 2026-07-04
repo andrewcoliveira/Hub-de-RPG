@@ -108,4 +108,13 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   eq("passo adicionado", w.SM.stories[0].passos.length, n);
 })();
 
+// ── v2: sociedades secretas ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/data-societies.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js"]);
+  ok("10 sociedades", Object.keys(w.SM_SOCIETIES).length===10);
+  eq("favor inicial 2", w.SM.play.favor, 2);
+  w.smSetSociety("exploradores"); eq("sociedade escolhida", w.SM.society.key, "exploradores");
+  w.smSetSociety("exploradores"); eq("re-clicar remove", w.SM.society.key, null);
+})();
+
 report();

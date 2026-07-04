@@ -462,6 +462,24 @@ function renderStories() {
     <div class="sm-pill-row"><input id="sm-new-step" placeholder="Próximo passo..."><button class="sm-btn" onclick="smAddStoryStep(0,document.getElementById('sm-new-step').value); document.getElementById('sm-new-step').value=''">+ Passo</button></div>`;
 }
 
+// ── Sociedades Secretas (aba 10) ─────────────────────────────────────
+function smSetSociety(key) {
+  SM.society.key = (SM.society.key === key ? null : key);
+  renderSocieties();
+  if (typeof renderTabBar === "function") renderTabBar();
+  smSave();
+}
+function renderSocieties() {
+  const el = document.getElementById("sm-societies");
+  if (!el) return;
+  el.innerHTML = `<p class="sm-hint">Escolha 0 ou 1 sociedade (começa com Favor 2):</p><div class="sm-grid sm-adv-grid">` +
+    Object.entries(SM_SOCIETIES).map(([k, s]) => {
+      const dis = s.heroisNao ? ' sm-disabled' : '';
+      const on = SM.society.key === k ? ' sm-selected' : '';
+      return `<button class="sm-card${on}${dis}" ${s.heroisNao ? 'disabled title="Heróis não entram"' : ''} onclick="smSetSociety('${k}')"><span class="sm-card-name">${s.label}</span><span class="sm-card-blurb">${s.quer}</span></button>`;
+    }).join("") + `</div>`;
+}
+
 // ── Exportar / Importar / Imprimir ──────────────────────────────────
 function smExport() {
   const blob = new Blob([JSON.stringify(SM, null, 2)], { type: "application/json" });
@@ -500,6 +518,7 @@ function renderAll() {
   renderSorcery();
   renderDueling();
   renderStories();
+  renderSocieties();
   const sum = document.getElementById("sm-summary");
   if (sum) sum.style.display = "none";
 }
@@ -511,4 +530,5 @@ Object.assign(window, {
   smSetSchool, smSorceryBudget, smPowerRank, smToggleSorceryPower, renderSorcery,
   smSetStyle, renderDueling,
   smApplyStoryPreset, smSetStoryField, smAddStoryStep, smToggleStoryStep, renderStories,
+  smSetSociety, renderSocieties,
 });
