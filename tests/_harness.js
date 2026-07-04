@@ -40,8 +40,14 @@ function loadSM(files, presetStore) {
     vm.runInContext(code, sandbox, { filename: f });
   }
   // `let`/`const` de nível superior não viram propriedades do objeto sandbox
-  // (só `var`/`function` viram). Reexpõe `SM` explicitamente para os testes.
-  sandbox.SM = vm.runInContext("typeof SM !== 'undefined' ? SM : undefined", sandbox);
+  // (só `var`/`function` viram). Reexpõe `SM` como getter dinâmico para os
+  // testes: funções como `smLoad()` reatribuem `SM` (não só mutam), então uma
+  // cópia estática tirada uma vez no load ficaria desatualizada.
+  Object.defineProperty(sandbox, "SM", {
+    configurable: true,
+    enumerable: true,
+    get() { return vm.runInContext("typeof SM !== 'undefined' ? SM : undefined", sandbox); },
+  });
   return sandbox;
 }
 
