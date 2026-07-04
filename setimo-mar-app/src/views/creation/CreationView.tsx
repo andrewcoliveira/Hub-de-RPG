@@ -2,10 +2,15 @@ import type { ComponentType } from "react";
 import { useFicha } from "@/store/ficha";
 import { TabBar } from "./TabBar";
 import { TabNav } from "./TabNav";
+import { ConceptNationStep } from "./steps/ConceptNationStep";
+import { TraitsStep } from "./steps/TraitsStep";
 
 // Mapa tabId → componente de Step. Preenchido incrementalmente nas Tasks 8-14;
 // abas ainda não implementadas caem no fallback "Em construção".
-const STEP_COMPONENTS: Partial<Record<string, ComponentType>> = {};
+const STEP_COMPONENTS: Partial<Record<string, ComponentType>> = {
+  conceito: ConceptNationStep,
+  atributos: TraitsStep,
+};
 
 function Placeholder() {
   return <div className="p-4 text-ink-soft">Em construção</div>;
