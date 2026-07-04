@@ -117,4 +117,15 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   w.smSetSociety("exploradores"); eq("re-clicar remove", w.SM.society.key, null);
 })();
 
+// ── v2: toques finais ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js"]);
+  w.smSelectNation("vodacce"); w.smSetNationTrait("argucia"); // Argúcia 3
+  eq("idiomas = argucia", w.smNumIdiomas(), 3);
+  ok("fortuna nao persiste sem rico", w.smFortunaPersiste()===false);
+  w.smToggleAdvantage("rico"); ok("fortuna persiste com rico", w.smFortunaPersiste()===true);
+  w.smAddReputacao("Honrado"); eq("reputacao add", w.SM.finalTouches.reputacoes, ["Honrado"]);
+  w.smAddIdioma("Teano"); w.smRemoveIdioma(0); eq("idioma add/remove", w.SM.finalTouches.idiomas, []);
+})();
+
 report();

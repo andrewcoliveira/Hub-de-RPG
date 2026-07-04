@@ -480,6 +480,24 @@ function renderSocieties() {
     }).join("") + `</div>`;
 }
 
+// ── Toques Finais (aba 11) ───────────────────────────────────────────
+function smAddReputacao(t) { if (!t) return; SM.finalTouches.reputacoes.push(t); renderToques(); smSave(); }
+function smRemoveReputacao(i) { SM.finalTouches.reputacoes.splice(i, 1); renderToques(); smSave(); }
+function smAddIdioma(t) { if (!t) return; SM.finalTouches.idiomas.push(t); renderToques(); smSave(); }
+function smRemoveIdioma(i) { SM.finalTouches.idiomas.splice(i, 1); renderToques(); smSave(); }
+function smSetFortunaInicial(n) { SM.finalTouches.fortunaInicial = +n || 0; smSave(); }
+function renderToques() {
+  const el = document.getElementById("sm-toques");
+  if (!el) return;
+  const chips = (arr, rm) => arr.map((x, i) => `<span class="sm-tag">${x} <a onclick="${rm}(${i})" style="cursor:pointer">✕</a></span>`).join(" ");
+  el.innerHTML = `
+   <h3 class="sm-sub">Reputação</h3><div class="sm-pill-row">${chips(SM.finalTouches.reputacoes, 'smRemoveReputacao')}</div>
+   <div class="sm-pill-row"><input id="sm-rep-in" placeholder="Ex.: Honrado"><button class="sm-btn" onclick="smAddReputacao(document.getElementById('sm-rep-in').value);document.getElementById('sm-rep-in').value=''">+ </button></div>
+   <h3 class="sm-sub">Idiomas <span class="sm-count">${SM.finalTouches.idiomas.length} / ${smNumIdiomas()}</span></h3><div class="sm-pill-row">${chips(SM.finalTouches.idiomas, 'smRemoveIdioma')}</div>
+   <div class="sm-pill-row"><input id="sm-idi-in" placeholder="Ex.: Teano antigo"><button class="sm-btn" onclick="smAddIdioma(document.getElementById('sm-idi-in').value);document.getElementById('sm-idi-in').value=''">+ </button></div>
+   <h3 class="sm-sub">Fortuna inicial</h3><input type="number" value="${SM.finalTouches.fortunaInicial}" oninput="smSetFortunaInicial(this.value)"> <span class="sm-hint">${smFortunaPersiste() ? 'Persiste entre sessões (Rico/Benfeitor).' : 'Zera a cada sessão.'}</span>`;
+}
+
 // ── Exportar / Importar / Imprimir ──────────────────────────────────
 function smExport() {
   const blob = new Blob([JSON.stringify(SM, null, 2)], { type: "application/json" });
@@ -519,6 +537,7 @@ function renderAll() {
   renderDueling();
   renderStories();
   renderSocieties();
+  renderToques();
   const sum = document.getElementById("sm-summary");
   if (sum) sum.style.display = "none";
 }
@@ -531,4 +550,5 @@ Object.assign(window, {
   smSetStyle, renderDueling,
   smApplyStoryPreset, smSetStoryField, smAddStoryStep, smToggleStoryStep, renderStories,
   smSetSociety, renderSocieties,
+  smAddReputacao, smRemoveReputacao, smAddIdioma, smRemoveIdioma, smSetFortunaInicial, renderToques,
 });
