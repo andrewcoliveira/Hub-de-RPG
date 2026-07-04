@@ -339,6 +339,67 @@ function renderSummary() {
   el.style.display = "block";
 }
 
+// ── Feitiçaria (aba 7) ───────────────────────────────────────────────
+function smSetSchool(key) {
+  SM.sorcery.school = key;
+  SM.sorcery.powers = [];
+  renderSorcery();
+  if (typeof renderTabBar === "function") renderTabBar();
+  smSave();
+}
+function smSorceryBudget() {
+  const buys = SM.advantages.filter(a => a === "feiticaria").length + (smFreeAdvantages().has("feiticaria") ? 1 : 0);
+  const n = Math.max(buys, 1);
+  return { maiores: 1 * n, menores: 2 * n };
+}
+function smPowerRank(key) {
+  const s = SM_SORCERY[SM.sorcery.school];
+  if (!s) return null;
+  if (s.maiores.some(p => p.key === key)) return "maior";
+  if (s.menores.some(p => p.key === key)) return "menor";
+  return null;
+}
+function smToggleSorceryPower(key) {
+  const i = SM.sorcery.powers.indexOf(key);
+  if (i >= 0) {
+    SM.sorcery.powers.splice(i, 1);
+  } else {
+    const rank = smPowerRank(key);
+    if (!rank) return;
+    const budget = smSorceryBudget();
+    const chosen = SM.sorcery.powers.filter(k => smPowerRank(k) === rank).length;
+    if (chosen >= budget[rank + "es"]) return; // "maiores"/"menores"
+    SM.sorcery.powers.push(key);
+  }
+  renderSorcery();
+  smSave();
+}
+function renderSorcery() {
+  const el = document.getElementById("sm-sorcery");
+  if (!el) return;
+  if (!smTemFeiticaria()) {
+    el.innerHTML = `<p class="sm-hint">Compre a Vantagem <strong>Feitiçaria</strong> (Passo 5) para desbloquear.</p>`;
+    return;
+  }
+  const nationSchool = SM.nation && SM_NATIONS[SM.nation].feiticaria;
+  const schoolKeys = Object.keys(SM_SORCERY);
+  const sel = SM.sorcery.school;
+  const schoolPicker = `<div class="sm-pill-row">${schoolKeys.map(k => `<button class="sm-pill${sel===k?' sm-selected':''}" onclick="smSetSchool('${k}')">${SM_SORCERY[k].label}</button>`).join("")}</div>`;
+  let body = "";
+  if (sel) {
+    const s = SM_SORCERY[sel];
+    const b = smSorceryBudget();
+    const card = (p, rank) => {
+      const on = SM.sorcery.powers.includes(p.key);
+      return `<button class="sm-card sm-adv-card${on?' sm-selected':''}" onclick="smToggleSorceryPower('${p.key}')"><span class="sm-card-name">${p.nome} <span class="sm-tag">${rank}</span></span><span class="sm-card-blurb">${p.desc}</span></button>`;
+    };
+    body = `<p class="sm-hint">Escola: <strong>${s.label}</strong> · Fonte: ${s.fonte} · Custo: ${s.custo}. Orçamento: ${b.maiores} Maior(es) + ${b.menores} Menor(es).</p>
+      <h3 class="sm-sub">Maiores</h3><div class="sm-grid sm-adv-grid">${s.maiores.map(p => card(p, 'Maior')).join("")}</div>
+      <h3 class="sm-sub">Menores</h3><div class="sm-grid sm-adv-grid">${s.menores.map(p => card(p, 'Menor')).join("")}</div>`;
+  }
+  el.innerHTML = `<p class="sm-hint">Escolha a escola${nationSchool?` (a da sua Nação é <strong>${nationSchool}</strong>)`:""}:</p>${schoolPicker}${body}`;
+}
+
 // ── Exportar / Importar / Imprimir ──────────────────────────────────
 function smExport() {
   const blob = new Blob([JSON.stringify(SM, null, 2)], { type: "application/json" });
@@ -374,6 +435,7 @@ function smPrint() {
 function renderAll() {
   renderConcept(); renderNation(); renderTraits(); renderBackgrounds();
   renderSkills(); renderAdvantages(); renderArcana(); renderBudgets(); renderSummaryButton();
+  renderSorcery();
   const sum = document.getElementById("sm-summary");
   if (sum) sum.style.display = "none";
 }
@@ -382,4 +444,5 @@ Object.assign(window, {
   smSetConcept, smSelectNation, smSetNationTrait, smAdjustTrait, smToggleBackground,
   smAdjustSkill, smToggleAdvantage, smSetArcana, smReset, renderSummary,
   smExport, smImportFile, smPrint, renderAll,
+  smSetSchool, smSorceryBudget, smPowerRank, smToggleSorceryPower, renderSorcery,
 });

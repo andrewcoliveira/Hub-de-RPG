@@ -61,4 +61,27 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   ok("aba ativa estavel ao sumir aba condicional", w.smActiveTab() === "arcanos");
 })();
 
+// ── v2: feitiçaria ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/data-sorcery.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js"]);
+  ok("sem feiticaria, sem escola valida", w.smTemFeiticaria() === false);
+  w.smSelectNation("avalon");            // escola: Glamour
+  w.smToggleAdvantage("feiticaria");
+  ok("com feiticaria", w.smTemFeiticaria() === true);
+  w.smSetSchool("glamour");
+  eq("escola definida", w.SM.sorcery.school, "glamour");
+  const orc = w.smSorceryBudget();
+  eq("orcamento 1 compra", orc, {maiores:1, menores:2});
+  // seleciona 1 maior + 2 menores (chaves reais de data-sorcery)
+  const S = w.SM_SORCERY.glamour;
+  w.smToggleSorceryPower(S.maiores[0].key);
+  w.smToggleSorceryPower(S.menores[0].key);
+  w.smToggleSorceryPower(S.menores[1].key);
+  eq("3 poderes selecionados", w.SM.sorcery.powers.length, 3);
+  // não deixa passar do orçamento de maiores
+  const before = w.SM.sorcery.powers.length;
+  w.smToggleSorceryPower(S.maiores[1].key);
+  eq("maior extra bloqueado", w.SM.sorcery.powers.length, before);
+})();
+
 report();
