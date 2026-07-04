@@ -6,6 +6,8 @@ import { ConceptNationStep } from "./steps/ConceptNationStep";
 import { TraitsStep } from "./steps/TraitsStep";
 import { BackgroundsStep } from "./steps/BackgroundsStep";
 import { SkillsStep } from "./steps/SkillsStep";
+import { AdvantagesStep } from "./steps/AdvantagesStep";
+import { ArcanaStep } from "./steps/ArcanaStep";
 
 // Mapa tabId → componente de Step. Preenchido incrementalmente nas Tasks 8-14;
 // abas ainda não implementadas caem no fallback "Em construção".
@@ -14,6 +16,8 @@ const STEP_COMPONENTS: Partial<Record<string, ComponentType>> = {
   atributos: TraitsStep,
   formacoes: BackgroundsStep,
   pericias: SkillsStep,
+  vantagens: AdvantagesStep,
+  arcanos: ArcanaStep,
 };
 
 function Placeholder() {
