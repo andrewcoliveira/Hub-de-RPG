@@ -11,7 +11,7 @@ export function TabBar() {
   const tabs = visibleTabs(f);
 
   return (
-    <nav aria-label="Abas de criação" className="flex flex-wrap gap-2 border-b border-line pb-3">
+    <nav aria-label="Abas de criação" className="no-print flex flex-wrap gap-2 border-b border-line pb-3">
       {tabs.map((tab) => {
         const isActive = tab.id === activeTab;
         const isComplete = tabComplete(f, tab.id);

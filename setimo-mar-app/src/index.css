@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════════════
+   Impressão — mostra só a ficha (esconde TopBar/abas/nav/controles).
+   `.no-print` marca qualquer controle de UI que não deve imprimir.
+   `.print-only` é o bloco exclusivo de impressão (resumo completo da
+   ficha via SheetSummary), oculto normalmente e revelado só no papel.
+   ══════════════════════════════════════════════════════════════════ */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}

@@ -6,7 +6,7 @@ export function TabNav() {
   const prevTab = useFicha((s) => s.prevTab);
 
   return (
-    <div className="flex items-center justify-between border-t border-line pt-3">
+    <div className="no-print flex items-center justify-between border-t border-line pt-3">
       <button
         type="button"
         onClick={() => prevTab()}

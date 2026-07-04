@@ -1,18 +1,7 @@
+import { useRef } from "react";
 import { useFicha } from "@/store/ficha";
 import { PillToggle } from "@/components/PillToggle";
-
-// Handlers stub — Exportar/Importar/Imprimir serão ligados na Tarefa 15 (src/lib/persistIO.ts).
-function handleExport() {
-  // TODO(Tarefa 15): ligar a exportFicha(f) real.
-}
-function handleImport() {
-  // TODO(Tarefa 15): ligar a importFichaFromFile(...).
-}
-function handlePrint() {
-  if (typeof window !== "undefined" && typeof window.print === "function") {
-    window.print();
-  }
-}
+import { exportFicha, importFichaFromFile, printSheet } from "@/lib/persistIO";
 
 export function TopBar() {
   const mode = useFicha((s) => s.mode);
@@ -20,9 +9,28 @@ export function TopBar() {
   const setMode = useFicha((s) => s.setMode);
   const setTheme = useFicha((s) => s.setTheme);
   const reset = useFicha((s) => s.reset);
+  const importFicha = useFicha((s) => s.importFicha);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function handleExport() {
+    exportFicha(useFicha.getState().f);
+  }
+
+  function handleImportClick() {
+    fileInputRef.current?.click();
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      importFichaFromFile(file, importFicha);
+    }
+    // Permite reimportar o mesmo arquivo em seguida.
+    e.target.value = "";
+  }
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface-2 px-4 py-3">
+    <header className="no-print flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface-2 px-4 py-3">
       <div className="flex items-center gap-3">
         <h1 className="font-serif text-lg text-ink">Criador de Fichas — 7º Mar</h1>
         <PillToggle
@@ -53,14 +61,21 @@ export function TopBar() {
         </button>
         <button
           type="button"
-          onClick={handleImport}
+          onClick={handleImportClick}
           className="rounded-md border border-line bg-surface px-3 py-1 text-sm text-ink hover:ring-2 hover:ring-accent"
         >
           Importar
         </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/json,.json"
+          hidden
+          onChange={handleFileChange}
+        />
         <button
           type="button"
-          onClick={handlePrint}
+          onClick={printSheet}
           className="rounded-md border border-line bg-surface px-3 py-1 text-sm text-ink hover:ring-2 hover:ring-accent"
         >
           Imprimir
