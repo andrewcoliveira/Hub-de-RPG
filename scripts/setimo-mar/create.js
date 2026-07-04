@@ -421,6 +421,47 @@ function renderDueling() {
   el.innerHTML = `<p class="sm-hint">Escolha um Estilo Duelista:</p><div class="sm-grid sm-adv-grid">${styles}</div><h3 class="sm-sub">Manobras (referência)</h3><ul class="sm-sheet-list">${man}</ul>`;
 }
 
+// ── Histórias Heroicas (aba 9) ───────────────────────────────────────
+function smApplyStoryPreset(key) {
+  const p = SM_STORY_PRESETS[key];
+  if (!p) return;
+  SM.stories[0] = { nome: p.label, final: p.final, recompensa: "", passos: [{ texto: p.primeiroPasso, feito: false }] };
+  renderStories();
+  smSave();
+}
+function smSetStoryField(i, field, val) {
+  SM.stories[i][field] = val;
+  smSave();
+}
+function smAddStoryStep(i, texto) {
+  if (!texto) return;
+  SM.stories[i].passos.push({ texto, feito: false });
+  renderStories();
+  smSave();
+}
+function smToggleStoryStep(i, j) {
+  SM.stories[i].passos[j].feito = !SM.stories[i].passos[j].feito;
+  renderStories();
+  smSave();
+}
+function renderStories() {
+  const el = document.getElementById("sm-stories");
+  if (!el) return;
+  const s = SM.stories[0];
+  const presets = Object.entries(SM_STORY_PRESETS).map(([k, p]) =>
+    `<button class="sm-pill" onclick="smApplyStoryPreset('${k}')">${p.label}</button>`
+  ).join("");
+  const passos = s.passos.map((p, j) =>
+    `<li><label><input type="checkbox" ${p.feito?'checked':''} onchange="smToggleStoryStep(0,${j})"> ${p.texto}</label></li>`
+  ).join("");
+  el.innerHTML = `<p class="sm-hint">Ponto de Partida (opcional): <span class="sm-pill-row">${presets}</span></p>
+    <label class="sm-field"><span>Nome/Mantra</span><input value="${s.nome}" oninput="smSetStoryField(0,'nome',this.value)"></label>
+    <label class="sm-field"><span>Final</span><input value="${s.final}" oninput="smSetStoryField(0,'final',this.value)"></label>
+    <label class="sm-field"><span>Recompensa</span><input value="${s.recompensa}" oninput="smSetStoryField(0,'recompensa',this.value)"></label>
+    <h3 class="sm-sub">Passos</h3><ul class="sm-sheet-list">${passos}</ul>
+    <div class="sm-pill-row"><input id="sm-new-step" placeholder="Próximo passo..."><button class="sm-btn" onclick="smAddStoryStep(0,document.getElementById('sm-new-step').value); document.getElementById('sm-new-step').value=''">+ Passo</button></div>`;
+}
+
 // ── Exportar / Importar / Imprimir ──────────────────────────────────
 function smExport() {
   const blob = new Blob([JSON.stringify(SM, null, 2)], { type: "application/json" });
@@ -458,6 +499,7 @@ function renderAll() {
   renderSkills(); renderAdvantages(); renderArcana(); renderBudgets(); renderSummaryButton();
   renderSorcery();
   renderDueling();
+  renderStories();
   const sum = document.getElementById("sm-summary");
   if (sum) sum.style.display = "none";
 }
@@ -468,4 +510,5 @@ Object.assign(window, {
   smExport, smImportFile, smPrint, renderAll,
   smSetSchool, smSorceryBudget, smPowerRank, smToggleSorceryPower, renderSorcery,
   smSetStyle, renderDueling,
+  smApplyStoryPreset, smSetStoryField, smAddStoryStep, smToggleStoryStep, renderStories,
 });

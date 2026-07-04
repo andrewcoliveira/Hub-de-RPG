@@ -95,4 +95,17 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   ok("ha manobras de referencia", w.SM_MANEUVERS.length >= 6);
 })();
 
+// ── v2: histórias heroicas ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/data-stories.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js"]);
+  ok("preset vendeta existe", !!w.SM_STORY_PRESETS.vendeta);
+  w.smApplyStoryPreset("vendeta");
+  ok("preset preencheu final", w.SM.stories[0].final.length>0);
+  ok("preset criou 1o passo", w.SM.stories[0].passos.length>=1);
+  w.smAddStoryStep(0,"Encontrar o assassino");
+  const n=w.SM.stories[0].passos.length;
+  w.smToggleStoryStep(0,0); ok("passo marcado", w.SM.stories[0].passos[0].feito===true);
+  eq("passo adicionado", w.SM.stories[0].passos.length, n);
+})();
+
 report();
