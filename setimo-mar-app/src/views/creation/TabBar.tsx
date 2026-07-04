@@ -19,7 +19,6 @@ export function TabBar() {
           <button
             key={tab.id}
             type="button"
-            role="button"
             aria-current={isActive ? "page" : undefined}
             onClick={() => goTab(tab.id)}
             className={[

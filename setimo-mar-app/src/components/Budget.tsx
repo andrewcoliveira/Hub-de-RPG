@@ -15,11 +15,11 @@ export function Budget({ label, left, total }: BudgetProps) {
       <span className="text-ink-soft">{label}</span>
       <div className="h-2 w-32 overflow-hidden rounded-full bg-surface-2">
         <div
-          className={over ? "h-full bg-red-500" : "h-full bg-accent"}
+          className={over ? "h-full bg-danger" : "h-full bg-accent"}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className={over ? "font-semibold text-red-500" : "text-ink"}>
+      <span className={over ? "font-semibold text-danger" : "text-ink"}>
         {left} / {total}
       </span>
     </div>

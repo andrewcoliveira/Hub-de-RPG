@@ -6,6 +6,8 @@
   --line: #d8c79e;
   --accent: #b6862f;
   --accent-ink: #20160a;
+  --danger: #a3341f;
+  --danger-ink: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -16,6 +18,8 @@
   --line: #284a63;
   --accent: #d8b45a;
   --accent-ink: #20160a;
+  --danger: #e06a54;
+  --danger-ink: #20120c;
 }
 
 /* acentos por nacao */
