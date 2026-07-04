@@ -73,9 +73,19 @@ export function mergeDefaults(data: unknown): Ficha {
   out.finalTouches = Object.assign({}, defFinalTouches, asRecordOrEmpty(src.finalTouches));
   out.play = Object.assign({}, defPlay, asRecordOrEmpty(src.play));
 
+  const defStory = defStories[0];
   const srcStories = src.stories;
   out.stories = Array.isArray(srcStories) && srcStories.length > 0
-    ? (srcStories as Ficha["stories"])
+    ? srcStories.map((story) => {
+        const s = asRecordOrEmpty(story);
+        const passos = Array.isArray(s.passos) ? (s.passos as Ficha["stories"][number]["passos"]) : defStory.passos;
+        return {
+          nome: typeof s.nome === "string" ? s.nome : defStory.nome,
+          final: typeof s.final === "string" ? s.final : defStory.final,
+          recompensa: typeof s.recompensa === "string" ? s.recompensa : defStory.recompensa,
+          passos,
+        };
+      })
     : defStories;
 
   out.skills = Object.assign({}, defSkills, asRecordOrEmpty(src.skills));

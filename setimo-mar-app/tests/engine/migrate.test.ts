@@ -13,4 +13,8 @@ describe("merge/migração", () => {
     const f = loadFrom(k => store[k] ?? null)!;
     expect(f.concept.name).toBe("Velho"); expect(f.nation).toBe("avalon"); expect(f.schemaVersion).toBe(2); expect(f.play.pontosHeroicos).toBe(1);
   });
+  it("mergeDefaults normaliza itens de stories (nunca passos undefined)", () => {
+    const m = mergeDefaults({ stories: [{}] });
+    expect(Array.isArray(m.stories[0].passos)).toBe(true);
+  });
 });
