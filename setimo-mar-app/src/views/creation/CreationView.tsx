@@ -13,6 +13,7 @@ import { DuelingStep } from "./steps/DuelingStep";
 import { StoriesStep } from "./steps/StoriesStep";
 import { SocietyStep } from "./steps/SocietyStep";
 import { FinalTouchesStep } from "./steps/FinalTouchesStep";
+import { ReviewStep } from "./steps/ReviewStep";
 
 // Mapa tabId → componente de Step. Preenchido incrementalmente nas Tasks 8-14;
 // abas ainda não implementadas caem no fallback "Em construção".
@@ -28,6 +29,7 @@ const STEP_COMPONENTS: Partial<Record<string, ComponentType>> = {
   historias: StoriesStep,
   sociedade: SocietyStep,
   toques: FinalTouchesStep,
+  revisao: ReviewStep,
 };
 
 function Placeholder() {
