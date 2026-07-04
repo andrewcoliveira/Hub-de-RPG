@@ -128,4 +128,16 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   w.smAddIdioma("Teano"); w.smRemoveIdioma(0); eq("idioma add/remove", w.SM.finalTouches.idiomas, []);
 })();
 
+// ── v2: modo Jogo (ferimentos, espiral, pontos heroicos, favor) ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js","scripts/setimo-mar/play.js"]);
+  w.smAdjustWound("ferimentosDramaticos",1); w.smAdjustWound("ferimentosDramaticos",1);
+  w.smAdjustWound("ferimentosDramaticos",1); w.smAdjustWound("ferimentosDramaticos",1);
+  eq("espiral no maximo 4", w.SM.play.ferimentosDramaticos, 4);
+  w.smAdjustWound("ferimentosDramaticos",1); eq("nao passa de 4", w.SM.play.ferimentosDramaticos, 4);
+  ok("desamparado em 4", w.SM.play.ferimentosDramaticos===4);
+  w.smAdjustHeroPoints(-1); eq("pontos heroicos min 0", w.SM.play.pontosHeroicos, 0);
+  w.smAdjustFavor(-5); eq("favor min 0", w.SM.play.favor, 0);
+})();
+
 report();

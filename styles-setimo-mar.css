@@ -204,3 +204,9 @@
 .sm-tab-active .sm-tab-check{color:#20160a}
 .sm-tab-panel{display:none}
 .sm-tab-nav{display:flex;justify-content:space-between;margin-top:1rem}
+
+/* ── MODO JOGO — ficha viva (v2) ── */
+.sm-play-tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.7rem;margin:1rem 0}
+.sm-play-card{background:#fff8e4;border:1px solid var(--sm-line);border-radius:10px;padding:.6rem;text-align:center}
+.sm-play-card h4{border:none;margin:.1rem 0 .4rem}
+.sm-track{display:flex;align-items:center;justify-content:center;gap:.5rem}
