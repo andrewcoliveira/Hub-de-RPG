@@ -49,4 +49,16 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   ok("aba feiticaria visivel com vantagem", w.SM_TABS.find(t=>t.id==="feiticaria").cond() === true);
 })();
 
+// ── v3: navegacao de abas por id estavel a abas condicionais ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js","scripts/setimo-mar/app.js"]);
+  w.smSelectNation("avalon");
+  w.smGoTab(5); // arcanos (6a aba visivel, indice 5)
+  ok("ativa = arcanos", w.smActiveTab() === "arcanos");
+  w.smToggleAdvantage("feiticaria"); // adiciona a aba feiticaria (indice 6) — nao deve mudar a ativa
+  ok("aba ativa estavel ao surgir aba condicional", w.smActiveTab() === "arcanos");
+  w.smToggleAdvantage("feiticaria"); // remove a aba feiticaria de novo
+  ok("aba ativa estavel ao sumir aba condicional", w.smActiveTab() === "arcanos");
+})();
+
 report();

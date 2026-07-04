@@ -59,6 +59,7 @@ function smToggleAdvantage(key) {
     SM.advantages.push(key);
   }
   renderAdvantages(); renderBudgets(); renderSummaryButton(); smSave();
+  if (typeof smRefreshTabs === "function") smRefreshTabs();
 }
 function smSetArcana(type, key) {
   const other = type === "virtude" ? "hubris" : "virtude";
