@@ -38,4 +38,15 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   ok("gravou v2 no storage", typeof w._store["setimoMar.ficha.v2"] === "string");
 })();
 
+// ── v2: completude por aba ──
+(function () {
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js","scripts/setimo-mar/app.js"]);
+  ok("aba conceito incompleta no inicio", w.smTabComplete("conceito") === false);
+  w.smSetConcept("name","Teste"); w.smSelectNation("avalon"); w.smSetNationTrait("finesse");
+  ok("aba conceito completa", w.smTabComplete("conceito") === true);
+  ok("aba feiticaria oculta sem vantagem", w.SM_TABS.find(t=>t.id==="feiticaria").cond() === false);
+  w.smToggleAdvantage("feiticaria");
+  ok("aba feiticaria visivel com vantagem", w.SM_TABS.find(t=>t.id==="feiticaria").cond() === true);
+})();
+
 report();

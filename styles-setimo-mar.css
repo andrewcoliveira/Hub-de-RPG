@@ -192,3 +192,15 @@
   .sm-sheet{border:1px solid #333; box-shadow:none}
   #sm-summary{margin:0}
 }
+
+/* ── MODOS & ABAS (v2) ── */
+.sm-mode-switch{display:flex;gap:.5rem;justify-content:center;margin:1rem}
+.sm-mode-btn{padding:.5rem 1.2rem;border-radius:999px;border:1px solid var(--sm-line);background:#fffef9;color:var(--sm-navy);font-weight:700;cursor:pointer}
+.sm-mode-btn.sm-active{background:var(--sm-navy);color:var(--sm-gold2)}
+.sm-tab-bar{display:flex;flex-wrap:wrap;gap:.35rem;margin:0 0 1rem;position:sticky;top:52px;background:var(--sm-parch);padding:.4rem 0;z-index:10}
+.sm-tab{font-size:.8rem;border:1px solid var(--sm-line);background:#fffef9;border-radius:8px;padding:.3rem .6rem;cursor:pointer;color:var(--sm-ink)}
+.sm-tab-active{background:var(--sm-gold);color:#20160a;border-color:var(--sm-gold)}
+.sm-tab-check{color:var(--sm-green);font-weight:700}
+.sm-tab-active .sm-tab-check{color:#20160a}
+.sm-tab-panel{display:none}
+.sm-tab-nav{display:flex;justify-content:space-between;margin-top:1rem}

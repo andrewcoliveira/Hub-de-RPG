@@ -35,7 +35,14 @@
   </div>
 </div>
 
+<div class="sm-mode-switch no-print">
+  <button id="sm-mode-criar" class="sm-mode-btn sm-active" onclick="smSetMode('criar')">✒️ Criação</button>
+  <button id="sm-mode-jogo" class="sm-mode-btn" onclick="smSetMode('jogo')">🎮 Jogo</button>
+</div>
+
 <main class="container sm-main">
+
+<div id="sm-create-panel">
 
   <p class="sm-disclaimer no-print">
     Núcleo jogável da criação de personagem (Conceito → Atributos → Formações → Perícias → Vantagens → Arcanos).
@@ -43,7 +50,10 @@
     <em>curados</em> nas regras podem ser ajustados em <code>scripts/setimo-mar/data.js</code>.
   </p>
 
-  <!-- ══ PASSO 1 · CONCEITO & NAÇÃO ══ -->
+  <div class="sm-tab-bar" id="sm-tab-bar"></div>
+
+  <!-- ══ ABA 1 · CONCEITO & NAÇÃO ══ -->
+  <div class="sm-tab-panel" data-tab="conceito">
   <section class="sm-step">
     <div class="sm-step-head"><span class="sm-step-num">1</span><h2>Conceito &amp; Nação</h2></div>
 
@@ -62,8 +72,10 @@
     <div class="sm-grid sm-nation-grid" id="sm-nation-grid"></div>
     <div class="sm-nation-trait" id="sm-nation-trait"></div>
   </section>
+  </div>
 
-  <!-- ══ PASSO 2 · ATRIBUTOS ══ -->
+  <!-- ══ ABA 2 · ATRIBUTOS ══ -->
+  <div class="sm-tab-panel" data-tab="atributos">
   <section class="sm-step">
     <div class="sm-step-head"><span class="sm-step-num">2</span><h2>Atributos</h2></div>
     <div class="sm-budget-bar">
@@ -73,15 +85,19 @@
     </div>
     <div class="sm-list" id="sm-traits"></div>
   </section>
+  </div>
 
-  <!-- ══ PASSO 3 · FORMAÇÕES ══ -->
+  <!-- ══ ABA 3 · FORMAÇÕES ══ -->
+  <div class="sm-tab-panel" data-tab="formacoes">
   <section class="sm-step">
     <div class="sm-step-head"><span class="sm-step-num">3</span><h2>Formações <span class="sm-count" id="sm-bg-count">0 / 2</span></h2></div>
     <p class="sm-hint">Escolha <strong>duas</strong>. Cada uma dá Perícias em Grau 1, uma Peculiaridade (rende Ponto Heroico) e uma Vantagem grátis.</p>
     <div class="sm-grid sm-bg-grid" id="sm-bg-grid"></div>
   </section>
+  </div>
 
-  <!-- ══ PASSO 4 · PERÍCIAS ══ -->
+  <!-- ══ ABA 4 · PERÍCIAS ══ -->
+  <div class="sm-tab-panel" data-tab="pericias">
   <section class="sm-step">
     <div class="sm-step-head"><span class="sm-step-num">4</span><h2>Perícias</h2></div>
     <div class="sm-budget-bar">
@@ -91,8 +107,10 @@
     </div>
     <div class="sm-list" id="sm-skills"></div>
   </section>
+  </div>
 
-  <!-- ══ PASSO 5 · VANTAGENS ══ -->
+  <!-- ══ ABA 5 · VANTAGENS ══ -->
+  <div class="sm-tab-panel" data-tab="vantagens">
   <section class="sm-step">
     <div class="sm-step-head"><span class="sm-step-num">5</span><h2>Vantagens</h2></div>
     <div class="sm-budget-bar">
@@ -103,8 +121,10 @@
     <div id="sm-adv-free"></div>
     <div class="sm-grid sm-adv-grid" id="sm-adv-grid"></div>
   </section>
+  </div>
 
-  <!-- ══ PASSO 6 · ARCANOS ══ -->
+  <!-- ══ ABA 6 · ARCANOS ══ -->
+  <div class="sm-tab-panel" data-tab="arcanos">
   <section class="sm-step">
     <div class="sm-step-head"><span class="sm-step-num">6</span><h2>Arcano — Virtude &amp; Húbris</h2></div>
     <p class="sm-hint">Escolha <strong>uma Virtude</strong> e <strong>uma Húbris</strong>, de <em>cartas diferentes</em>. A Virtude ajuda 1×/sessão; encenar a Húbris rende 1 Ponto Heroico.</p>
@@ -113,8 +133,25 @@
     <h3 class="sm-sub sm-sub-hubris">Húbris</h3>
     <div class="sm-grid sm-arcana-grid" id="sm-arcana-hubris"></div>
   </section>
+  </div>
 
-  <!-- ══ RESUMO ══ -->
+  <!-- ══ ABA 7 · FEITIÇARIA (vazia — Task 4) ══ -->
+  <div class="sm-tab-panel" data-tab="feiticaria"></div>
+
+  <!-- ══ ABA 8 · DUELO (vazia — Task 5) ══ -->
+  <div class="sm-tab-panel" data-tab="duelo"></div>
+
+  <!-- ══ ABA 9 · HISTÓRIAS (vazia — Task 6) ══ -->
+  <div class="sm-tab-panel" data-tab="historias"></div>
+
+  <!-- ══ ABA 10 · SOCIEDADE (vazia — Task 7) ══ -->
+  <div class="sm-tab-panel" data-tab="sociedade"></div>
+
+  <!-- ══ ABA 11 · TOQUES FINAIS (vazia — Task 8) ══ -->
+  <div class="sm-tab-panel" data-tab="toques"></div>
+
+  <!-- ══ ABA 12 · REVISÃO ══ -->
+  <div class="sm-tab-panel" data-tab="revisao">
   <section class="sm-step sm-finish">
     <div class="sm-checklist no-print" id="sm-checklist"></div>
     <button class="sm-btn sm-btn-primary" id="sm-summary-btn" disabled
@@ -123,6 +160,16 @@
     </button>
     <div id="sm-summary" style="display:none"></div>
   </section>
+  </div>
+
+  <div class="sm-tab-nav no-print">
+    <button class="sm-btn sm-btn-ghost" onclick="smPrevTab()">← Anterior</button>
+    <button class="sm-btn sm-btn-primary" onclick="smNextTab()">Próximo →</button>
+  </div>
+
+</div>
+
+<div id="sm-play" style="display:none"></div>
 
 </main>
 
@@ -135,5 +182,7 @@
 <script src="scripts/setimo-mar/data-core.js"></script>
 <script src="scripts/setimo-mar/state.js"></script>
 <script src="scripts/setimo-mar/create.js"></script>
+<script src="scripts/setimo-mar/play.js"></script>
+<script src="scripts/setimo-mar/app.js"></script>
 </body>
 </html>

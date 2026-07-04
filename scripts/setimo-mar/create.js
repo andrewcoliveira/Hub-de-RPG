@@ -376,15 +376,9 @@ function renderAll() {
   const sum = document.getElementById("sm-summary");
   if (sum) sum.style.display = "none";
 }
-function smInit() {
-  smLoad();
-  renderAll();
-}
-document.addEventListener("DOMContentLoaded", smInit);
-
-// expõe para os onclick inline
+// expõe para os onclick inline (smInit agora vive em app.js)
 Object.assign(window, {
   smSetConcept, smSelectNation, smSetNationTrait, smAdjustTrait, smToggleBackground,
   smAdjustSkill, smToggleAdvantage, smSetArcana, smReset, renderSummary,
-  smExport, smImportFile, smPrint,
+  smExport, smImportFile, smPrint, renderAll,
 });
