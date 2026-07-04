@@ -400,6 +400,27 @@ function renderSorcery() {
   el.innerHTML = `<p class="sm-hint">Escolha a escola${nationSchool?` (a da sua Nação é <strong>${nationSchool}</strong>)`:""}:</p>${schoolPicker}${body}`;
 }
 
+// ── Estilos de Duelo (aba 8) ─────────────────────────────────────────
+function smSetStyle(key) {
+  SM.dueling.style = (SM.dueling.style === key ? null : key);
+  renderDueling();
+  if (typeof renderTabBar === "function") renderTabBar();
+  smSave();
+}
+function renderDueling() {
+  const el = document.getElementById("sm-dueling");
+  if (!el) return;
+  if (!smTemAcademiaDuelista()) {
+    el.innerHTML = `<p class="sm-hint">Compre a Vantagem <strong>Academia Duelista</strong> (Passo 5) para desbloquear.</p>`;
+    return;
+  }
+  const styles = Object.entries(SM_DUELING_STYLES).map(([k, s]) =>
+    `<button class="sm-card${SM.dueling.style===k?' sm-selected':''}" onclick="smSetStyle('${k}')"><span class="sm-card-name">${s.label}</span><span class="sm-card-blurb">${s.nacao} — ${s.bonus}</span></button>`
+  ).join("");
+  const man = SM_MANEUVERS.map(m => `<li><strong>${m.nome}:</strong> ${m.efeito}</li>`).join("");
+  el.innerHTML = `<p class="sm-hint">Escolha um Estilo Duelista:</p><div class="sm-grid sm-adv-grid">${styles}</div><h3 class="sm-sub">Manobras (referência)</h3><ul class="sm-sheet-list">${man}</ul>`;
+}
+
 // ── Exportar / Importar / Imprimir ──────────────────────────────────
 function smExport() {
   const blob = new Blob([JSON.stringify(SM, null, 2)], { type: "application/json" });
@@ -436,6 +457,7 @@ function renderAll() {
   renderConcept(); renderNation(); renderTraits(); renderBackgrounds();
   renderSkills(); renderAdvantages(); renderArcana(); renderBudgets(); renderSummaryButton();
   renderSorcery();
+  renderDueling();
   const sum = document.getElementById("sm-summary");
   if (sum) sum.style.display = "none";
 }
@@ -445,4 +467,5 @@ Object.assign(window, {
   smAdjustSkill, smToggleAdvantage, smSetArcana, smReset, renderSummary,
   smExport, smImportFile, smPrint, renderAll,
   smSetSchool, smSorceryBudget, smPowerRank, smToggleSorceryPower, renderSorcery,
+  smSetStyle, renderDueling,
 });

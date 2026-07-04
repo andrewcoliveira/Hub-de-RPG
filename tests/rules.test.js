@@ -84,4 +84,15 @@ const FILES = ["scripts/setimo-mar/data-core.js", "scripts/setimo-mar/state.js",
   eq("maior extra bloqueado", w.SM.sorcery.powers.length, before);
 })();
 
+// ── v2: estilos de duelo ──
+(function(){
+  const w = loadSM(["scripts/setimo-mar/data-core.js","scripts/setimo-mar/data-dueling.js","scripts/setimo-mar/state.js","scripts/setimo-mar/create.js"]);
+  ok("sem academia, sem estilo", w.smTemAcademiaDuelista()===false);
+  w.smToggleAdvantage("academiaduelista");
+  ok("com academia", w.smTemAcademiaDuelista()===true);
+  w.smSetStyle("valroux"); eq("estilo definido", w.SM.dueling.style, "valroux");
+  ok("valroux existe nos dados", !!w.SM_DUELING_STYLES.valroux);
+  ok("ha manobras de referencia", w.SM_MANEUVERS.length >= 6);
+})();
+
 report();
