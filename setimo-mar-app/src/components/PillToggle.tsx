@@ -13,7 +13,7 @@ export interface PillToggleProps<T extends string> {
 /** Grupo de pílulas mutuamente exclusivas (ex.: modo Criação|Jogo, +1 de Nação). */
 export function PillToggle<T extends string>({ options, value, onChange, name }: PillToggleProps<T>) {
   return (
-    <div role="group" aria-label={name} className="inline-flex gap-1 rounded-full border border-line bg-surface-2 p-1">
+    <div role="group" aria-label={name} className="sm-pill-group">
       {options.map((opt) => {
         const isActive = opt.value === value;
         return (
@@ -22,10 +22,7 @@ export function PillToggle<T extends string>({ options, value, onChange, name }:
             type="button"
             aria-pressed={isActive}
             onClick={() => onChange(opt.value)}
-            className={[
-              "rounded-full px-3 py-1 text-sm transition-colors",
-              isActive ? "bg-accent text-accent-ink" : "text-ink-soft hover:text-ink",
-            ].join(" ")}
+            className={["sm-pill", isActive ? "sm-pill-active" : ""].filter(Boolean).join(" ")}
           >
             {opt.label}
           </button>

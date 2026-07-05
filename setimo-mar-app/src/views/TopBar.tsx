@@ -5,9 +5,7 @@ import { exportFicha, importFichaFromFile, printSheet } from "@/lib/persistIO";
 
 export function TopBar() {
   const mode = useFicha((s) => s.mode);
-  const theme = useFicha((s) => s.theme);
   const setMode = useFicha((s) => s.setMode);
-  const setTheme = useFicha((s) => s.setTheme);
   const reset = useFicha((s) => s.reset);
   const importFicha = useFicha((s) => s.importFicha);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,41 +28,33 @@ export function TopBar() {
   }
 
   return (
-    <header className="no-print flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface-2 px-4 py-3">
-      <div className="flex items-center gap-3">
-        <h1 className="font-serif text-lg text-ink">Criador de Fichas — 7º Mar</h1>
-        <PillToggle
-          name="Modo"
-          value={mode}
-          onChange={setMode}
-          options={[
-            { value: "criar", label: "Criação" },
-            { value: "jogo", label: "Jogo" },
-          ]}
-        />
+    <header className="sm-topbar no-print">
+      <div className="sm-brand">
+        <div className="sm-brand-mark" aria-hidden="true">
+          ✦
+        </div>
+        <div>
+          <h1 className="sm-brand-title">7ºMAR</h1>
+          <span className="sm-brand-sub">Criador de Fichas</span>
+        </div>
       </div>
 
+      <PillToggle
+        name="Modo"
+        value={mode}
+        onChange={setMode}
+        options={[
+          { value: "criar", label: "Criação" },
+          { value: "jogo", label: "Jogo" },
+        ]}
+      />
+
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="rounded-md border border-line bg-surface px-3 py-1 text-sm text-ink hover:ring-2 hover:ring-accent"
-        >
-          {theme === "dark" ? "Tema claro" : "Tema escuro"}
+        <button type="button" onClick={handleExport} className="sm-btn">
+          <span aria-hidden="true">⭳</span> Exportar
         </button>
-        <button
-          type="button"
-          onClick={handleExport}
-          className="rounded-md border border-line bg-surface px-3 py-1 text-sm text-ink hover:ring-2 hover:ring-accent"
-        >
-          Exportar
-        </button>
-        <button
-          type="button"
-          onClick={handleImportClick}
-          className="rounded-md border border-line bg-surface px-3 py-1 text-sm text-ink hover:ring-2 hover:ring-accent"
-        >
-          Importar
+        <button type="button" onClick={handleImportClick} className="sm-btn">
+          <span aria-hidden="true">⭱</span> Importar
         </button>
         <input
           ref={fileInputRef}
@@ -73,12 +63,8 @@ export function TopBar() {
           hidden
           onChange={handleFileChange}
         />
-        <button
-          type="button"
-          onClick={printSheet}
-          className="rounded-md border border-line bg-surface px-3 py-1 text-sm text-ink hover:ring-2 hover:ring-accent"
-        >
-          Imprimir
+        <button type="button" onClick={printSheet} className="sm-btn">
+          <span aria-hidden="true">⎙</span> Imprimir
         </button>
         <button
           type="button"
@@ -87,7 +73,7 @@ export function TopBar() {
               reset();
             }
           }}
-          className="rounded-md border border-line bg-surface px-3 py-1 text-sm text-accent hover:ring-2 hover:ring-accent"
+          className="sm-btn sm-btn-danger"
         >
           Recomeçar
         </button>

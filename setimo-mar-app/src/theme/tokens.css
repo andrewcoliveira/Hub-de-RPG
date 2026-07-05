@@ -1,35 +1,54 @@
+/* ══════════════════════════════════════════════════════════════════
+   7º Mar — Tokens de tema (dourado sobre preto, "cofre/tesouro").
+   Visual comprometido no ESCURO; a Nação selecionada tinge o --accent
+   (bordas, brilhos, estados ativos). O dourado de marca (--gold*) é fixo.
+   ══════════════════════════════════════════════════════════════════ */
 :root {
-  --surface: #f4ecd8;
-  --surface-2: #efe3c6;
-  --ink: #2c2117;
-  --ink-soft: #5b4a38;
-  --line: #d8c79e;
-  --accent: #b6862f;
-  --accent-ink: #20160a;
-  --danger: #a3341f;
-  --danger-ink: #ffffff;
+  /* canvas e superfícies */
+  --bg: #080b0c;              /* fundo do app (mais escuro) */
+  --surface: #14120d;         /* painéis / cards (elevados) */
+  --surface-2: #1e1a12;       /* tiles internos */
+  --panel-warm: #2a1c0d;      /* madeira quente (stepper ativo, etc.) */
+
+  /* tinta */
+  --ink: #ead8b4;             /* texto principal (pergaminho) */
+  --ink-soft: #a9986f;        /* texto secundário */
+  --line: rgba(216, 168, 76, 0.22);
+
+  /* acento (padrão = dourado; sobrescrito por [data-nation]) */
+  --accent: #d8a84c;
+  --accent-ink: #201607;
+
+  /* dourado de marca (fixo, não muda por nação) */
+  --gold: #d8a84c;
+  --gold-bright: #ffd97b;
+  --gold-soft: #8f672f;
+
+  /* pergaminho (coluna de flavor + impressão) */
+  --paper-1: #e6c48b;
+  --paper-2: #b58b4e;
+  --paper-ink: #302012;
+
+  /* estados */
+  --danger: #d9694a;
+  --danger-ink: #1a0d08;
+  --success: #8fbb3f;
+
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.58);
 }
 
-[data-theme="dark"] {
-  --surface: #0d2436;
-  --surface-2: #123049;
-  --ink: #eadfc6;
-  --ink-soft: #b8a882;
-  --line: #284a63;
-  --accent: #d8b45a;
-  --accent-ink: #20160a;
-  --danger: #e06a54;
-  --danger-ink: #20120c;
-}
+/* data-theme existe para compatibilidade (a maquinaria de tema segue viva),
+   mas a paleta é comprometida no escuro em :root. */
+[data-theme="dark"] { color-scheme: dark; }
 
-/* acentos por nacao */
-[data-nation="avalon"] { --accent: #2c7a7b; --accent-ink: #eafcfb; }
-[data-nation="castilha"] { --accent: #a3341f; --accent-ink: #ffe9e2; }
-[data-nation="sarmacia"] { --accent: #b0872f; --accent-ink: #241a06; }
-[data-nation="eisen"] { --accent: #6b6f76; --accent-ink: #f2f3f5; }
-[data-nation="inismore"] { --accent: #2f7d4f; --accent-ink: #e8fbef; }
-[data-nation="montaigne"] { --accent: #3f5fb0; --accent-ink: #eaefff; }
-[data-nation="terrasaltas"] { --accent: #5a6e3a; --accent-ink: #f0f5e4; }
-[data-nation="ussura"] { --accent: #4a7fa5; --accent-ink: #eaf4fb; }
-[data-nation="vesten"] { --accent: #7a5aa0; --accent-ink: #f3ecff; }
-[data-nation="vodacce"] { --accent: #8c2f57; --accent-ink: #ffe9f1; }
+/* ── Acentos por nação (tingem detalhes sobre o preto) ── */
+[data-nation="avalon"] { --accent: #3fa9a6; --accent-ink: #eafcfb; }
+[data-nation="castilha"] { --accent: #c8452b; --accent-ink: #ffe9e2; }
+[data-nation="sarmacia"] { --accent: #d3a23c; --accent-ink: #241a06; }
+[data-nation="eisen"] { --accent: #9aa0a8; --accent-ink: #14161a; }
+[data-nation="inismore"] { --accent: #3fa066; --accent-ink: #e8fbef; }
+[data-nation="montaigne"] { --accent: #5f7fd6; --accent-ink: #eaefff; }
+[data-nation="terrasaltas"] { --accent: #86a04e; --accent-ink: #10140a; }
+[data-nation="ussura"] { --accent: #5fa0c8; --accent-ink: #eaf4fb; }
+[data-nation="vesten"] { --accent: #9a78c4; --accent-ink: #f3ecff; }
+[data-nation="vodacce"] { --accent: #c04f7d; --accent-ink: #ffe9f1; }

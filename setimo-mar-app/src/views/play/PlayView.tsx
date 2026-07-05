@@ -18,14 +18,16 @@ export function PlayView() {
   const skillsComGrau = SKILLS.filter((s) => skillFinal(f, s.key) > 0);
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      {/* Cabeçalho */}
-      <Card>
-        <h2 className="text-xl font-bold text-ink">{f.concept?.name || "Sem nome"}</h2>
-        {f.concept?.concept ? <p className="text-sm text-ink-soft">{f.concept.concept}</p> : null}
-        {nationDef ? <p className="text-sm text-accent">{nationDef.label}</p> : null}
-      </Card>
+    <div className="mx-auto w-[min(1040px,94vw)] pt-7">
+      <section className="sm-frame sm-sheet">
+        {/* Cabeçalho */}
+        <span className="sm-eyebrow">Ficha viva</span>
+        <h2 className="sm-sheet-title">{f.concept?.name || "Sem nome"}</h2>
+        <p className="sm-subtitle">
+          {[f.concept?.concept, nationDef?.label].filter(Boolean).join(" · ") || "Herói de Théah"}
+        </p>
 
+        <div className="sm-stage flex flex-col gap-5">
       {/* Atributos (somente-leitura) */}
       <Card>
         <h3 className="mb-2 font-semibold text-ink">Atributos</h3>
@@ -69,6 +71,8 @@ export function PlayView() {
           placeholder="Anotações de sessão..."
         />
       </Card>
+        </div>
+      </section>
     </div>
   );
 }

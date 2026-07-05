@@ -11,9 +11,9 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-surface text-ink">
+      <div className="sm-app-bg min-h-screen text-ink">
         <TopBar />
-        <div className="no-print">
+        <div className="no-print pb-16">
           {mode === "criar" ? <CreationView /> : <PlayView />}
         </div>
         {/* Bloco exclusivo de impressão: só a ficha, sem abas/controles. */}

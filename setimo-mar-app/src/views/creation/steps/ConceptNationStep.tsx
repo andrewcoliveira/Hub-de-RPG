@@ -29,7 +29,7 @@ export function ConceptNationStep() {
       </div>
 
       <div>
-        <h3 className="mb-2 font-semibold text-ink">Nação</h3>
+        <h3 className="sm-section-title mb-3 text-lg">Nação</h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
           {NATION_KEYS.map((key) => {
             const def = NATIONS[key];
@@ -37,8 +37,21 @@ export function ConceptNationStep() {
             return (
               <button key={key} type="button" onClick={() => selectNation(key)} className="text-left">
                 <Card active={active} title={def.blurb}>
-                  <div className="font-semibold text-ink">{def.label}</div>
-                  <div className="text-xs text-ink-soft">{def.blurb}</div>
+                  <div className="font-serif text-base font-bold text-accent">{def.label}</div>
+                  <div className="mt-0.5 text-xs text-ink-soft">{def.blurb}</div>
+                  <div className="mt-2 flex flex-wrap items-center gap-1">
+                    <span className="text-[0.6rem] font-semibold uppercase tracking-wide text-ink-soft">
+                      +1 em
+                    </span>
+                    {def.traits.map((t) => (
+                      <span
+                        key={t}
+                        className="rounded-full border border-line px-2 py-0.5 text-[0.68rem] font-medium text-accent"
+                      >
+                        {traitLabel(t)}
+                      </span>
+                    ))}
+                  </div>
                 </Card>
               </button>
             );
@@ -48,7 +61,7 @@ export function ConceptNationStep() {
 
       {nation && (
         <div>
-          <h3 className="mb-2 font-semibold text-ink">+1 de Nação</h3>
+          <h3 className="sm-section-title mb-3 text-lg">+1 de Nação</h3>
           <PillToggle<TraitKey | "">
             name="Atributo de Nação"
             value={f.nationTrait ?? ""}
