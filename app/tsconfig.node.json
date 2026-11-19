@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "composite": true, "skipLibCheck": true, "target": "ES2022", "module": "ESNext", "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true, "allowJs": true, "checkJs": true, "types": ["node"],
+    "emitDeclarationOnly": true, "outDir": "./node_modules/.cache/tsc-node"
+  },
+  "include": ["vite.config.ts", "tailwind.config.ts", "site.config.mjs", "scripts/*.mjs"]
+}
