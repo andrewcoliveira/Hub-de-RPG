@@ -198,7 +198,7 @@ export default function HubApp() {
       <footer className="footer">
         <p>Ferramentas feitas por fãs, sem vínculo oficial com as editoras.</p>
         <p className="footer-small">
-          Império de Jade e Ordem Paranormal RPG são publicados pela <a href="https://jamboeditora.com.br" target="_blank" rel="noopener">Jambô Editora</a>.
+          Império de Jade, Ordem Paranormal RPG e Sacramento RPG são publicados pela <a href="https://jamboeditora.com.br" target="_blank" rel="noopener">Jambô Editora</a>.
           7º Mar e demais marcas citadas pertencem aos seus respectivos detentores.
         </p>
       </footer>

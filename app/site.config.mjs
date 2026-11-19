@@ -18,6 +18,7 @@ export const PAGES = [
   { name: "imperio-de-jade-gerador", html: "imperio-de-jade/gerador.html" },
   { name: "setimo-mar", html: "setimo-mar/index.html" },
   { name: "ordem-paranormal-ficha", html: "ordem-paranormal/ficha.html" },
+  { name: "sacramento-ficha", html: "sacramento/ficha.html" },
 ];
 
 /**

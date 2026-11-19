@@ -67,4 +67,15 @@ export const SYSTEMS: SystemDef[] = [
       { kind: "ficha", title: "Criador de Fichas", desc: "Atributos, origem, classe e NEX, perícias, poderes e rituais", href: "ordem-paranormal/ficha.html" },
     ],
   },
+  {
+    key: "sacramento",
+    name: "Sacramento",
+    tags: ["Faroeste mineiro", "d6"],
+    desc: "Pistoleiros, vigaristas e foragidos atrás de redenção no Oeste Selvagem de 1880 — com cafézin e pão de queijo.",
+    color: "var(--sys-sacramento)",
+    banner: '<circle cx="60" cy="60" r="44"/><path d="M60 22l9 22 24 2-18 15 6 23-21-13-21 13 6-23-18-15 24-2z"/>',
+    tools: [
+      { kind: "ficha", title: "Criador de Fichas", desc: "Atributos, antecedentes, habilidades, Redenção, montaria e equipamento", href: "sacramento/ficha.html" },
+    ],
+  },
 ];
